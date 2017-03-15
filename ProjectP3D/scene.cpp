@@ -232,7 +232,7 @@ void Scene::parseLight(FILE *file)
 	}
 
 	Vect * position = new Vect(lx, ly, lz);
-	Vect * color = new Vect(1.0, 1.0, 1.0);
+	Vect * color = new Vect(lr, lg, lb);
 	Light * light = new Light(position, color);
 	this->_lights.push_back(light);
 }
