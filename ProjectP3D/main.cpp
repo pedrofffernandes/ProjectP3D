@@ -75,6 +75,7 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 			Ray * newRay = new Ray(hit->add(lVect->multiply(EPSILON)), lVect);
 			if (!inShadow(newRay)) {
 				color = ((Light*)*itL)->getDiffuse(normal, closest->getMat()); //+diffuse
+				return color;
 			}
 		}
 	}

@@ -26,6 +26,6 @@ Vect * Light::getLVect(Vect * hit)
 
 Vect * Light::getDiffuse(Vect * normal, Material * mat){
 
-	//Vect* result = mat->getRGB
-	return nullptr;
+	Vect* result = mat->getRGB();
+	return result;
 }
