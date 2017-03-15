@@ -37,3 +37,8 @@ float Material::getKs()
 {
 	return _ks;
 }
+
+float Material::getShine()
+{
+	return _shine;
+}

@@ -54,5 +54,5 @@ float Sphere::intersect(Ray * ray)
 
 Vect * Sphere::getNormal(Vect * point)
 {
-	return point->minus(_position)->normalize();
+	return (point->minus(_position))->normalize();
 }

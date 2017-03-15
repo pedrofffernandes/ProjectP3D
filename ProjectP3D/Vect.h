@@ -29,6 +29,10 @@ public:
 	//Adds two vectors
 	Vect * add(Vect * vect);
 
+	Vect * lineP(Vect * vect);
+	
+	Vect * positive();
+
 	// METHOD functions
 	// get individual coordinates
 	float getX() { return _x; }
