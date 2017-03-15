@@ -64,3 +64,21 @@ Vect * Vect::add(Vect * vect) {
 	z = _z + vect->getZ();
 	return new Vect(x, y, z);
 }
+
+Vect * Vect::lineP(Vect * vect)
+{
+	float x, y, z;
+	x = _x * vect->getX();
+	y = _y * vect->getY();
+	z = _z * vect->getZ();
+	return new Vect(x, y, z);
+}
+
+Vect * Vect::positive()
+{
+	float x, y, z;
+	x = (_x < 0) ? _x * -1 : _x;
+	y = (_y < 0) ? _y * -1 : _y;
+	z = (_z < 0) ? _z * -1 : _z;
+	return new Vect(x, y, z);
+}
