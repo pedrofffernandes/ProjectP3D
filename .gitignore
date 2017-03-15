@@ -1,0 +1,7 @@
+*.db
+*.tlog
+*.lastbuildstate
+*.idb
+*.vcxproj
+*.filters
+*.nff
