@@ -36,6 +36,7 @@ void drawScene()
 			Ray * ray = scene->getCamera()->PrimaryRay(x, y);
 			Vect * color = rayTracing(ray, 1, 1.0); //depth=1, ior=1.0
 			glBegin(GL_POINTS);
+			//std::cout << 'x' << color->getX() << 'y' << color->getY() << 'z' << color->getZ() << '\n';
 			glColor3f(color->getX(), color->getY(), color->getZ());
 			glVertex2f(x, y);
 			glEnd();
@@ -67,33 +68,38 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 	std::list<Light*> lights = scene->getLights();
 	std::list<Light*>::iterator itL;
 	Vect* hit = ray->getHitPoint(dist);
-	Vect* color;
+	Vect* color = new Vect();
+
 	for (itL = lights.begin(); itL != lights.end(); itL++) {
-		Vect * lVect = ((Light*)*itL)->getLVect(hit);
+		Vect * L = ((Light*)*itL)->getLVect(hit);
 		Vect* normal = closest->getNormal(hit);
-		if(lVect->dotP(normal) > 0) {
-			Ray * newRay = new Ray(hit->add(lVect->multiply(EPSILON)), lVect);
+		if(L->dotP(normal) > 0) {
+			Ray * newRay = new Ray(hit->add(L->multiply(EPSILON)), L);
 			if (!inShadow(newRay)) {
-				color = ((Light*)*itL)->getDiffuse(normal, closest->getMat()); //+diffuse
-				return color;
+				Vect* difuse = ((Light*)*itL)->getDiffuse(normal, L, closest->getMat()); //+diffuse
+				Vect* specular = ((Light*)*itL)->getSpecular(normal, L, closest->getMat(), ray->getD()->multiply(-1));
+
+				color = color->add(difuse);
+				color = color->add(specular);
 			}
 		}
+
 	}
+	return color;
+	
+	
 
 
 	//return nullptr;
 }
 
 bool inShadow(Ray* ray) {
-	
 	std::list<Obj*> objs = scene->getObjects();
 	std::list<Obj*>::iterator itO;
-
-	float dist = 9999, hit=0;
+	float hit = 0;
 	for (itO = objs.begin(); itO != objs.end(); itO++) {
 		hit = ((Obj*)*itO)->intersect(ray);				//Intersect
-
-		if (hit!=0) {
+		if (hit > 0) {
 			return true;
 		}
 	}
