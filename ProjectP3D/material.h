@@ -16,5 +16,6 @@ public:
 	Vect* getRGB();
 	float getKd();
 	float getKs();
+	float getShine();
 };
 
