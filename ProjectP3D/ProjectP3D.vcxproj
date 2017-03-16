@@ -39,6 +39,7 @@
     <ClInclude Include="Ray.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="sphere.h" />
+    <ClInclude Include="poly.h" />
     <ClInclude Include="Vect.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
