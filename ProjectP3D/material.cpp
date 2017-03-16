@@ -15,7 +15,7 @@ Material::Material(Vect* rgb, float kd, float ks, float shine, float T, float re
 	//
 	_T = T;
 	//
-	_refraction = refraction;
+	_ior = refraction;
 }
 
 
@@ -41,4 +41,14 @@ float Material::getKs()
 float Material::getShine()
 {
 	return _shine;
+}
+
+float Material::getT()
+{
+	return _T;
+}
+
+float Material::getIOR()
+{
+	return _ior;
 }

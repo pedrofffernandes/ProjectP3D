@@ -7,6 +7,8 @@
 
 #define MAX_DEPTH 6
 #define EPSILON 1e-4
+#define IOR 1.0
+
 Scene * scene = NULL;
 int RES_X, RES_Y;
 Vect * rayTracing(Ray * ray, int depth, float ior);
@@ -34,7 +36,7 @@ void drawScene()
 		for (int x = 0; x < RES_X; x++)
 		{	
 			Ray * ray = scene->getCamera()->PrimaryRay(x, y);
-			Vect * color = rayTracing(ray, 1, 1.0); //depth=1, ior=1.0
+			Vect * color = rayTracing(ray, 1, IOR); //depth=1, ior=1.0
 			glBegin(GL_POINTS);
 			//std::cout << 'x' << color->getX() << 'y' << color->getY() << 'z' << color->getZ() << '\n';
 			glColor3f(color->getX(), color->getY(), color->getZ());
@@ -69,10 +71,11 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 	std::list<Light*>::iterator itL;
 	Vect* hit = ray->getHitPoint(dist);
 	Vect* color = new Vect();
+	Vect* normal = closest->getNormal(hit);
 
 	for (itL = lights.begin(); itL != lights.end(); itL++) {
 		Vect * L = ((Light*)*itL)->getLVect(hit);
-		Vect* normal = closest->getNormal(hit);
+		
 		if(L->dotP(normal) > 0) {
 			Ray * newRay = new Ray(hit->add(L->multiply(EPSILON)), L);
 			if (!inShadow(newRay)) {
@@ -82,9 +85,69 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 				color = color->add(difuse);
 				color = color->add(specular);
 			}
+
 		}
 
 	}
+
+	if (depth >= MAX_DEPTH)
+		return color;
+	//Reflection
+	if (closest->getMat()->getKs() > 0) {
+		Vect * I = ray->getD();
+		Vect * V = normal->multiply(-2 * I->dotP(normal));
+		Vect * R = I->add(V);
+		Ray * reflectRay = new Ray(hit->add(R->multiply(EPSILON)), R);
+		Vect * reflectColor = rayTracing(reflectRay, depth + 1, ior);
+		color = color->add(reflectColor->multiply(closest->getMat()->getKs()));
+	}
+	//Refraction
+	if (closest->getMat()->getT() > 0) {
+		
+		float cosi = ray->getD()->dotP(normal);
+		float aux;
+		float iorM = ior;
+		float iorO = closest->getMat()->getIOR();
+		Vect * n = normal;
+		if (cosi < 0) {
+			cosi = -cosi;
+		} else {
+			aux = iorM;
+			iorM = iorO;
+			iorO = aux;
+			n = n->multiply(-1);
+		}
+
+		float eta = iorM / iorO;
+		float k = 1 - eta*eta * (1 - cosi*cosi);
+		if (k < 0) {
+			return new Vect();
+		} else {
+			Vect * I = ray->getD()->multiply(eta);
+			n = n->multiply(eta * cosi - sqrtf(k));
+			Vect* T = I->add(n);
+			Ray * refractRay = new Ray(hit->add(T->multiply(EPSILON)), T);
+			Vect * refractColor = rayTracing(refractRay, depth + 1, ior);
+			color = color->add(refractColor->multiply(closest->getMat()->getT()));
+		}
+
+
+
+		/*
+		Vect * I = ray->getD();
+		Vect * IT = (normal->multiply(2 * I->dotP(normal)))->minus(I);
+		Vect * t = IT->normalize();
+		float sin = IT->length();
+		Vect * sint = t->multiply(sin);
+		Vect * cosN = normal->multiply(-1*sqrt(1 - sin*sin));
+		Vect * R = sint->add(cosN);
+		Ray * refractedRay = new Ray(hit->add(R->multiply(EPSILON)), R);
+		Vect * refractedColor = rayTracing(refractedRay, depth + 1, ior);
+		//R = sint+ cos-n
+		*/
+	}
+	
+
 	return color;
 	
 	
@@ -110,7 +173,7 @@ bool inShadow(Ray* ray) {
 int main(int argc, char**argv)
 {
 	scene = new Scene();
-	if (!(scene->load_nff("jap.nff"))) return 0;
+	if (!(scene->load_nff("test_scenes/balls_low.nff"))) return 0;
 	
 
 	
