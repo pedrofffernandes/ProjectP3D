@@ -120,7 +120,7 @@ bool Scene::parseFile(FILE *file) {
 			{
 			char cha = getc(file);
 			if (cha == 'p') {
-				//parsePolyPatch(f, scene);		//TODO
+				parsePolygon(file);		//TODO
 			} else if (cha == 'l') {
 				parsePlane(file);
 			} else {
@@ -284,6 +284,64 @@ void Scene::parseSphere(FILE *file)
 	Sphere * sphere = new Sphere(position, radius, mat);
 
 	this->addObject(sphere);
+}
+
+void Scene::parsePolygon(FILE * file)
+{
+	int d;
+	if (fscanf(file, " %d ", &d) != 1)
+	{
+		printf("Polygon syntax error");
+		exit(1);
+	}
+	if (d == 3) {
+		parseTriangle(file);
+	} else {
+		parseBigPoly(file, d);
+	}
+}
+
+void Scene::parseTriangle(FILE * file)
+{
+	float x, y, z;
+	if (fscanf(file, " %g %g %g ", &x, &y, &z) != 3)
+	{
+		printf("Triangle syntax error");
+		exit(1);
+	}
+	Vect* point1 = new Vect(x, y, z);
+
+	if (fscanf(file, " %g %g %g ", &x, &y, &z) != 3)
+	{
+		printf("Triangle syntax error");
+		exit(1);
+	}
+	Vect* point2 = new Vect(x, y, z);
+
+	if (fscanf(file, " %g %g %g ", &x, &y, &z) != 3)
+	{
+		printf("Triangle syntax error");
+		exit(1);
+	}
+	Vect* point3 = new Vect(x, y, z);
+	Triangle* triangle = new Triangle(point1, point2, point3, mat);
+	this->addObject(triangle);
+}
+
+void Scene::parseBigPoly(FILE * file, int d)
+{
+	float x, y, z;
+	BigPoly* bigpoly = new BigPoly(mat);
+	Vect* point;
+	for (d; d > 0; d--) {
+		if (fscanf(file, " %g %g %g ", &x, &y, &z) != 3)
+		{
+			printf("Triangle syntax error");
+			exit(1);
+		}
+		point = new Vect(x, y, z);
+		bigpoly->addPoint(point);
+	}
 }
 
 /*

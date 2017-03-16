@@ -13,6 +13,8 @@
 #include "Plane.h"
 #include "Sphere.h"
 #include "Vect.h"
+#include "Triangle.h"
+#include "BigPoly.h"
 
 class Scene {
 	std::list<Light*> _lights;
@@ -39,6 +41,9 @@ public:
 	void Scene::parseFill(FILE * file);
 	//void Scene::parseCone(FILE * file);
 	void Scene::parseSphere(FILE * file);
+	void Scene::parsePolygon(FILE * file);
+	void Scene::parseTriangle(FILE * file);
+	void Scene::parseBigPoly(FILE * file, int d);
 	void Scene::parsePlane(FILE * file);
 
 

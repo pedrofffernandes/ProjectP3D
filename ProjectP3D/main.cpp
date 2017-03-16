@@ -38,11 +38,11 @@ void drawScene()
 			Ray * ray = scene->getCamera()->PrimaryRay(x, y);
 			Vect * color = rayTracing(ray, 1, IOR); //depth=1, ior=1.0
 			glBegin(GL_POINTS);
+			std::cout << color->getX() << "   " << color->getY() << "   " << color->getZ() << '\n';
 			glColor3f(color->getX(), color->getY(), color->getZ());
 			glVertex2f(x, y);
 			glEnd();
 			glFlush();
-			
 		}
 	}
 	
