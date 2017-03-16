@@ -10,5 +10,6 @@ class Triangle :
 public:
 	Triangle(Vect* point1, Vect* point2, Vect* point3, Material* mat);
 	~Triangle();
+	float intersect(Ray * ray);
 };
 

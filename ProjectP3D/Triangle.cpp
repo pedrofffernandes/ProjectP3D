@@ -12,3 +12,8 @@ Triangle::Triangle(Vect * point1, Vect * point2, Vect * point3, Material * mat) 
 Triangle::~Triangle()
 {
 }
+
+float Triangle::intersect(Ray * ray)
+{
+	return 0.0f;
+}

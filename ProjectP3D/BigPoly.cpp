@@ -19,3 +19,8 @@ std::list<Vect*> BigPoly::getPoints()
 {
 	return _points;
 }
+
+float BigPoly::intersect(Ray * ray)
+{
+	return 0.0f;
+}

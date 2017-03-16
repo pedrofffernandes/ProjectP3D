@@ -6,5 +6,6 @@ class Polygon :
 public:
 	Polygon(Material* mat);
 	~Polygon();
+	virtual float intersect(Ray * ray);
 };
 
