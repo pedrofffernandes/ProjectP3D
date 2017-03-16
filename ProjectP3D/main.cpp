@@ -6,7 +6,7 @@
 #include <vector>
 
 #define MAX_DEPTH 6
-#define EPSILON 1e-5
+#define EPSILON 1e-4
 Scene * scene = NULL;
 int RES_X, RES_Y;
 Vect * rayTracing(Ray * ray, int depth, float ior);
