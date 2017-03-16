@@ -17,6 +17,7 @@ public:
 	
 	//Returns the vector length
 	float length();
+	//Normalizes the vector
 	Vect * normalize();
 	//Subtracts two vectors
 	Vect * minus(Vect * vect);
@@ -28,9 +29,9 @@ public:
 	Vect * multiply(float f);
 	//Adds two vectors
 	Vect * add(Vect * vect);
-
+	//Multiplies the elements of the vectors
 	Vect * lineP(Vect * vect);
-	
+	//absf to all vector elements
 	Vect * positive();
 
 	// METHOD functions

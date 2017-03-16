@@ -17,6 +17,7 @@ public:
 	Vect * getD();
 	//Returns _origin
 	Vect * getO();
+	//Returns the point the ray hitsS
 	Vect* getHitPoint(float dist);
 };
 

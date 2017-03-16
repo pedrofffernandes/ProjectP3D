@@ -38,7 +38,6 @@ void drawScene()
 			Ray * ray = scene->getCamera()->PrimaryRay(x, y);
 			Vect * color = rayTracing(ray, 1, IOR); //depth=1, ior=1.0
 			glBegin(GL_POINTS);
-			//std::cout << 'x' << color->getX() << 'y' << color->getY() << 'z' << color->getZ() << '\n';
 			glColor3f(color->getX(), color->getY(), color->getZ());
 			glVertex2f(x, y);
 			glEnd();
@@ -54,18 +53,18 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 	std::list<Obj*> objs = scene->getObjects();
 	std::list<Obj*>::iterator itO;
 
-	Obj* closest = nullptr;
-	float dist = 9999, distNew;
-	for (itO = objs.begin(); itO != objs.end(); itO++) {
-		distNew = ((Obj*)*itO)->intersect(ray);				//Intersect
+	Obj* closest = nullptr;									//the closest object to the camera that the ray hits
 
-		if (distNew > EPSILON && distNew < dist) {
-			dist = distNew;
+	float dist = 9999, distNew;
+	for (itO = objs.begin(); itO != objs.end(); itO++) {	//Iterates over all objects
+		distNew = ((Obj*)*itO)->intersect(ray);				//Intersect returns distance from hitpoint to camera
+		if (distNew > EPSILON && distNew < dist) {			//If distance is smaller than all previous distances
+			dist = distNew;									//Then save distance and object
 			closest = (Obj*)*itO;
 		}		
 	}
-	if (closest == nullptr)
-		return scene->getBackground();
+	if (closest == nullptr)									//If the ray doesn't intersect any object
+		return scene->getBackground();						
 
 	std::list<Light*> lights = scene->getLights();
 	std::list<Light*>::iterator itL;
@@ -73,16 +72,17 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 	Vect* color = new Vect();
 	Vect* normal = closest->getNormal(hit);
 
-	for (itL = lights.begin(); itL != lights.end(); itL++) {
+	//Local ilumination
+	for (itL = lights.begin(); itL != lights.end(); itL++) {			//Iterates over all the lights
 		Vect * L = ((Light*)*itL)->getLVect(hit);
 		
-		if(L->dotP(normal) > 0) {
-			Ray * newRay = new Ray(hit->add(L->multiply(EPSILON)), L);
+		if(L->dotP(normal) > 0) {										//If surface faces light
+			Ray * newRay = new Ray(hit->add(L->multiply(EPSILON)), L);	//Create shadowfeeler
 			if (!inShadow(newRay)) {
-				Vect* difuse = ((Light*)*itL)->getDiffuse(normal, L, closest->getMat()); //+diffuse
-				Vect* specular = ((Light*)*itL)->getSpecular(normal, L, closest->getMat(), ray->getD()->multiply(-1));
+				Vect* difuse = ((Light*)*itL)->getDiffuse(normal, L, closest->getMat());								//Compute Diffuse		
+				Vect* specular = ((Light*)*itL)->getSpecular(normal, L, closest->getMat(), ray->getD()->multiply(-1));	//Compute Specular
 
-				color = color->add(difuse);
+				color = color->add(difuse);					
 				color = color->add(specular);
 			}
 
@@ -90,32 +90,35 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 
 	}
 
-	if (depth >= MAX_DEPTH)
+	if (depth >= MAX_DEPTH)												
 		return color;
+
 	//Reflection
-	if (closest->getMat()->getKs() > 0) {
-		Vect * I = ray->getD();
-		Vect * V = normal->multiply(-2 * I->dotP(normal));
-		Vect * R = I->add(V);
-		Ray * reflectRay = new Ray(hit->add(R->multiply(EPSILON)), R);
-		Vect * reflectColor = rayTracing(reflectRay, depth + 1, ior);
-		color = color->add(reflectColor->multiply(closest->getMat()->getKs()));
+	if (closest->getMat()->getKs() > 0) {					//If material is reflective
+		Vect * I = ray->getD();								//Compute reflection direction
+		Vect * V = normal->multiply(-2 * I->dotP(normal));	//
+		Vect * R = I->add(V);								//
+
+		Ray * reflectRay = new Ray(hit->add(R->multiply(EPSILON)), R);			//Create reflection ray
+		Vect * reflectColor = rayTracing(reflectRay, depth + 1, ior);			//Compute reflection color
+		color = color->add(reflectColor->multiply(closest->getMat()->getKs())); //Add color to pixel color
 	}
+
 	//Refraction
 	if (closest->getMat()->getT() > 0) {
 		
-		float cosi = ray->getD()->dotP(normal);
+		float cosi = ray->getD()->dotP(normal);				//Get cos of Viewer and normal
 		float aux;
 		float iorM = ior;
 		float iorO = closest->getMat()->getIOR();
 		Vect * n = normal;
-		if (cosi < 0) {
-			cosi = -cosi;
-		} else {
-			aux = iorM;
-			iorM = iorO;
-			iorO = aux;
-			n = n->multiply(-1);
+		if (cosi < 0) {										//If outside
+			cosi = -cosi;									//Turn cos positive
+		} else {											//If inside
+			aux = iorM;										//Swap ior's
+			iorM = iorO;									//
+			iorO = aux;										//
+			n = n->multiply(-1);							//Get inside normal
 		}
 
 		float eta = iorM / iorO;
@@ -123,15 +126,13 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 		if (k < 0) {
 			return new Vect();
 		} else {
-			Vect * I = ray->getD()->multiply(eta);
-			n = n->multiply(eta * cosi - sqrtf(k));
-			Vect* T = I->add(n);
-			Ray * refractRay = new Ray(hit->add(T->multiply(EPSILON)), T);
-			Vect * refractColor = rayTracing(refractRay, depth + 1, ior);
-			color = color->add(refractColor->multiply(closest->getMat()->getT()));
+			Vect * I = ray->getD()->multiply(eta);			//Compute refraction ray equation
+			n = n->multiply(eta * cosi - sqrtf(k));			//Using Ray Tracing: Texto Apoio
+			Vect* T = I->add(n);							//
+			Ray * refractRay = new Ray(hit->add(T->multiply(EPSILON)), T);			//Create refraction ray
+			Vect * refractColor = rayTracing(refractRay, depth + 1, ior);			//Compute refraction color
+			color = color->add(refractColor->multiply(closest->getMat()->getT()));	//Add refraction color to pixel
 		}
-
-
 
 		/*
 		Vect * I = ray->getD();
@@ -149,17 +150,15 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 	
 
 	return color;
-	
-	
-
-
-	//return nullptr;
 }
 
+//Checks if a ray intersects any object
+//Used to check if objects are in shadow
 bool inShadow(Ray* ray) {
 	std::list<Obj*> objs = scene->getObjects();
 	std::list<Obj*>::iterator itO;
 	float hit = 0;
+
 	for (itO = objs.begin(); itO != objs.end(); itO++) {
 		hit = ((Obj*)*itO)->intersect(ray);				//Intersect
 		if (hit > 0) {
