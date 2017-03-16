@@ -61,6 +61,7 @@ public:
 
 	int Camera::getResX();
 	int Camera::getResY();
+	//Computes the primaryRay
 	Ray * Camera::PrimaryRay(int x, int y);
 	Vect * getZe();
 

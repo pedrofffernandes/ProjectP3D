@@ -12,7 +12,7 @@ public:
 	~Light();
 	void setColor(Vect * rgb);
 	Vect * getLVect(Vect * hit);
-	Vect* getDiffuse(Vect* normal, Vect* L, Material* mat);
-	Vect* getSpecular(Vect* normal, Vect* L, Material* mat, Vect* v);
+	Vect * getDiffuse(Vect* normal, Vect* L, Material* mat);
+	Vect * getSpecular(Vect* normal, Vect* L, Material* mat, Vect* v);
 };
 

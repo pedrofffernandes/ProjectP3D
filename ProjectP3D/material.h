@@ -8,7 +8,7 @@ class Material
 	float _ks;
 	float _shine;
 	float _T; // transmitance
-	float _refraction; // index of refraction
+	float _ior; // index of refraction
 public:
 	Material(Vect* rgb, float kd, float ks, float shine, float T, float refraction);
 	~Material();
@@ -17,5 +17,7 @@ public:
 	float getKd();
 	float getKs();
 	float getShine();
+	float getT();
+	float getIOR();
 };
 
