@@ -16,5 +16,6 @@ public:
 	void addPoint(Vect* point);
 	std::list<Vect*> getPoints();
 	float intersect(Ray * ray);
+	Vect* getNormal();
 };
 

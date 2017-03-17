@@ -24,3 +24,8 @@ float BigPoly::intersect(Ray * ray)
 {
 	return 0.0f;
 }
+
+Vect * BigPoly::getNormal()
+{
+	return nullptr;
+}

@@ -7,5 +7,7 @@ public:
 	Polygon(Material* mat);
 	~Polygon();
 	virtual float intersect(Ray * ray);
+	virtual Vect* getNormal();
+
 };
 
