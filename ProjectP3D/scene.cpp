@@ -119,7 +119,7 @@ bool Scene::parseFile(FILE *file) {
 		case 'p':
 			{
 			char cha = getc(file);
-			if (cha == 'p') {
+			if (cha == ' ') {
 				parsePolygon(file);		//TODO
 			} else if (cha == 'l') {
 				parsePlane(file);
@@ -289,7 +289,7 @@ void Scene::parseSphere(FILE *file)
 void Scene::parsePolygon(FILE * file)
 {
 	int d;
-	if (fscanf(file, " %d ", &d) != 1)
+	if (fscanf(file, "%d ", &d) != 1)
 	{
 		printf("Polygon syntax error");
 		exit(1);

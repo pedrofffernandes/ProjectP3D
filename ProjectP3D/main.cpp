@@ -38,7 +38,7 @@ void drawScene()
 			Ray * ray = scene->getCamera()->PrimaryRay(x, y);
 			Vect * color = rayTracing(ray, 1, IOR); //depth=1, ior=1.0
 			glBegin(GL_POINTS);
-			std::cout << color->getX() << "   " << color->getY() << "   " << color->getZ() << '\n';
+			//std::cout << color->getX() << "   " << color->getY() << "   " << color->getZ() << '\n';
 			glColor3f(color->getX(), color->getY(), color->getZ());
 			glVertex2f(x, y);
 			glEnd();
@@ -55,7 +55,7 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 
 	Obj* closest = nullptr;									//the closest object to the camera that the ray hits
 
-	float dist = 9999, distNew;
+	float dist = 9999, distNew = 0;
 	for (itO = objs.begin(); itO != objs.end(); itO++) {	//Iterates over all objects
 		distNew = ((Obj*)*itO)->intersect(ray);				//Intersect returns distance from hitpoint to camera
 		if (distNew > EPSILON && distNew < dist) {			//If distance is smaller than all previous distances
@@ -172,7 +172,7 @@ bool inShadow(Ray* ray) {
 int main(int argc, char**argv)
 {
 	scene = new Scene();
-	if (!(scene->load_nff("test_scenes/balls_low.nff"))) return 0;
+	if (!(scene->load_nff("test_scenes/mount_low.nff"))) return 0;
 	
 
 	

@@ -14,3 +14,8 @@ float Polygon::intersect(Ray * ray)
 {
 	return 0.0f;
 }
+
+Vect * Polygon::getNormal()
+{
+	return nullptr;
+}

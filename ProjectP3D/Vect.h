@@ -3,6 +3,7 @@
 #define _VECT_H
 
 #include "math.h"
+#include <stdlib.h>
 
 class Vect
 {
@@ -34,6 +35,11 @@ public:
 	//absf to all vector elements
 	Vect * positive();
 
+	int max();
+	//Compute det of x and y
+	float det2D(Vect * vect);
+	//Rearange coordinates for Badouel's algorithm
+	Vect* r2D2(int i);
 	// METHOD functions
 	// get individual coordinates
 	float getX() { return _x; }

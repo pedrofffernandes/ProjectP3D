@@ -82,3 +82,39 @@ Vect * Vect::positive()
 	z = (_z < 0) ? _z * -1 : _z;
 	return new Vect(x, y, z);
 }
+
+int Vect::max()
+{
+	Vect* n = this->positive();
+	if(n->getX() < n->getY()) {
+		if (n->getY() < n->getZ()) {
+			return 2;
+		} else {
+			return 1;
+		}
+	} else {
+		if (n->getX() < n->getZ()) {
+			return 2;
+		} else {
+			return 0;
+		}
+	}
+}
+
+float Vect::det2D(Vect * vect)
+{
+	return _x*vect->getY() - _y*vect->getX();
+}
+
+Vect * Vect::r2D2(int i)
+{
+	switch (i) {
+	case 0:
+		return new Vect(_y, _z, 0);
+	case 1:
+		return new Vect(_x, _z, 0);
+	case 2:
+		return new Vect(_x, _y, 0);
+	}
+	return nullptr;
+}
