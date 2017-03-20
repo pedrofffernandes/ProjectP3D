@@ -1,6 +1,4 @@
 #include "Plane.h"
-#include <stdio.h>
-#include <iostream>
 
 
 Plane::Plane(Vect* point1, Vect* point2, Vect* point3, Material * mat) : Obj(mat)
@@ -23,10 +21,9 @@ Plane::~Plane()
 
 float Plane::intersect(Ray * ray)
 {	
-	if (_n->dotP(ray->getD()) < 1e-6 && _n->dotP(ray->getD()) > -1e-6)
+	if (_n->dotP(ray->getD()) > -1e-4)
 		return 0.0f;
-	float a = -(((ray->getO())->minus(_point1))->dotP(_n)) / (_n->dotP(ray->getD())); //TODO otimizaçaos
-	return a;
+	return -(((ray->getO())->minus(_point1))->dotP(_n)) / (_n->dotP(ray->getD())); //TODO otimizaçaos
 }
 
 Vect * Plane::getNormal(Vect * point)
