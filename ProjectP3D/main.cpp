@@ -4,23 +4,6 @@
 #define EPSILON 1e-4
 #define IOR 1.0
 
-#include <chrono>
-
-#define TIMING
-
-#ifdef TIMING
-#define INIT_TIMER auto start = std::chrono::high_resolution_clock::now();
-#define START_TIMER  start = std::chrono::high_resolution_clock::now();
-#define STOP_TIMER(name)  std::cout << "RUNTIME of " << name << ": " << \
-    std::chrono::duration_cast<std::chrono::milliseconds>( \
-            std::chrono::high_resolution_clock::now()-start \
-    ).count() << " ms " << std::endl; 
-#else
-#define INIT_TIMER
-#define START_TIMER
-#define STOP_TIMER(name)
-#endif
-
 Scene * scene = NULL;
 int RES_X, RES_Y;
 Vect * rayTracing(Ray * ray, int depth, float ior);
@@ -43,8 +26,6 @@ void reshape(int w, int h)
 
 void drawScene()
 {	
-	INIT_TIMER
-	START_TIMER
 	for (int y = 0; y < RES_Y; y++)
 	{
 		for (int x = 0; x < RES_X; x++)
@@ -58,7 +39,6 @@ void drawScene()
 			glFlush();
 		}
 	} 
-	STOP_TIMER("Fim")
 	printf("Terminou!\n");
 }
 
@@ -67,11 +47,6 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 	std::list<Obj*>::iterator itO;
 
 	Obj* closest = nullptr;									//the closest object to the camera that the ray hits
-
-	// test...
-	// another tes..
-	// teste 2
-	// another line of code
 
 	float dist = 9999, distNew = 0;
 	for (itO = objs.begin(); itO != objs.end(); itO++) {	//Iterates over all objects
@@ -127,8 +102,8 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 		
 		float cosi = ray->getD()->dotP(normal);				//Get cos of Viewer and normal
 		float aux;
-		float iorM = ior;
-		float iorO = closest->getMat()->getIOR();
+		float iorM = ior;									//IOR medium
+		float iorO = closest->getMat()->getIOR();			//IOR object
 		Vect * n = normal;
 		if (cosi < 0) {										//If outside
 			cosi = -cosi;									//Turn cos positive
@@ -175,7 +150,7 @@ bool inShadow(Ray* ray) {
 int main(int argc, char**argv)
 {
 	scene = new Scene();
-	if (!(scene->load_nff("test_scenes/balls_medium.nff"))) return 0;
+	if (!(scene->load_nff("test_scenes/mount_high.nff"))) return 0;
 	
 	RES_X = scene->getCamera()->getResX();
 	RES_Y = scene->getCamera()->getResY();

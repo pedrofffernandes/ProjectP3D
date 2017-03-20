@@ -23,11 +23,10 @@ Triangle::~Triangle()
 }
 
 float Triangle::intersect(Ray * ray)
-{	/*
-	if (ray->getD()->dotP(_n) < EPSILON) {
+{	
+	if (ray->getD()->dotP(_n) > -EPSILON) {
 		return 0.0;
 	}
-	*/
 	float t = -(_d + _n->dotP(ray->getO())) / (_n->dotP(ray->getD()));
 	if (t < EPSILON) {
 		return 0.0;
