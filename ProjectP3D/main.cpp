@@ -68,6 +68,8 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 
 	Obj* closest = nullptr;									//the closest object to the camera that the ray hits
 
+	// master change
+
 	float dist = 9999, distNew = 0;
 	for (itO = objs.begin(); itO != objs.end(); itO++) {	//Iterates over all objects
 		distNew = ((Obj*)*itO)->intersect(ray);				//Intersect returns distance from hitpoint to camera
