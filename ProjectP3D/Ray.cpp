@@ -1,17 +1,14 @@
 #include "Ray.h"
+#include <iostream>
 
 
-
-Ray::Ray(Vect* origin, Vect* direction)
-{
+Ray::Ray(Vect* origin, Vect* direction) {
 	_origin = origin;
 	_direction = direction;
 	_direction = direction->normalize();
 }
 
-
-Ray::~Ray()
-{
+Ray::~Ray() {
 }
 
 Vect * Ray::getD()
@@ -30,3 +27,4 @@ Vect * Ray::getHitPoint(float dist)
 	hit = hit->add(_origin);
 	return hit;
 }
+
