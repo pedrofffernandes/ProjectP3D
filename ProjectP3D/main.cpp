@@ -37,6 +37,8 @@ void drawScene()
 			glVertex2f(x, y);
 			glEnd();
 			glFlush();
+			delete ray;
+			delete color;
 		}
 	} 
 	printf("Terminou!\n");
@@ -63,7 +65,7 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 	std::list<Light*>::iterator itL;
 	Vect* hit = ray->getHitPoint(dist);
 	Vect* color = new Vect();
-	Vect* normal = closest->getNormal(hit);
+	Vect* normal = new Vect(closest->getNormal(hit));
 
 	//Local ilumination
 	for (itL = lights.begin(); itL != lights.end(); itL++) {			//Iterates over all the lights

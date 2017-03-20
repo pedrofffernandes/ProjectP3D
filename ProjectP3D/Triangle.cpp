@@ -16,6 +16,8 @@ Triangle::Triangle(Vect * point1, Vect * point2, Vect * point3, Material * mat) 
 	_d = _n->dotP(_point1->multiply(-1));
 
 	_i = _n->max();
+	delete p12;
+	delete p13;
 }
 
 Triangle::~Triangle()
@@ -40,6 +42,11 @@ float Triangle::intersect(Ray * ray)
 	float deno = b->det2D(c);
 	float alfa = a->det2D(c) / deno;
 	float beta = b->det2D(a) / deno;
+
+	delete a;
+	delete b;
+	delete c;
+	delete point;
 
 	if (alfa >= 0 && beta >= 0 && alfa + beta <= 1)
 		

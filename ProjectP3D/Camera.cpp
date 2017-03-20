@@ -55,7 +55,13 @@ Ray * Camera::PrimaryRay(int x, int y) {
 	
 	Vect * d = (vz->add(vy))->add(vx);
 	
-	return new Ray(_vrp, d);
+	Ray * result = new Ray(_vrp, d);
+
+	delete vz;
+	delete vy;
+	delete vx;
+	delete d;
+	return result;
 }
 
 Vect * Camera::getZe()
