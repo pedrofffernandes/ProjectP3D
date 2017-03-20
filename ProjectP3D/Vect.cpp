@@ -16,6 +16,12 @@ Vect::Vect(float x, float y, float z)
 	_z = z;
 }
 
+Vect::Vect(Vect * vect) {
+	_x = vect->getX();
+	_y = vect->getY();
+	_z = vect->getZ();
+}
+
 Vect::~Vect()
 {
 }

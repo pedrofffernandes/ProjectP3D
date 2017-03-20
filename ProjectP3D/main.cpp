@@ -59,7 +59,7 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 		}		
 	}
 	if (closest == nullptr)									//If the ray doesn't intersect any object
-		return scene->getBackground();						
+		return new Vect(scene->getBackground());						
 
 	std::list<Light*> lights = scene->getLights();
 	std::list<Light*>::iterator itL;
@@ -127,9 +127,7 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 
 		float eta = iorM / iorO;
 		float k = 1 - eta*eta * (1 - cosi*cosi);
-		if (k < 0) {
-			return new Vect();
-		} else {
+		if (k >= 0) {										//k<0 Total internal refraction
 			Vect * I = ray->getD()->multiply(eta);			//Compute refraction ray equation
 			n = n->multiply(eta * cosi - sqrtf(k));			//Using Ray Tracing: Texto Apoio
 			Vect* T = I->add(n);							//
@@ -167,7 +165,7 @@ bool inShadow(Ray* ray) {
 int main(int argc, char**argv)
 {
 	scene = new Scene();
-	if (!(scene->load_nff("test_scenes/mount_high.nff"))) return 0;
+	if (!(scene->load_nff("test_scenes/mount_low.nff"))) return 0;
 	
 	RES_X = scene->getCamera()->getResX();
 	RES_Y = scene->getCamera()->getResY();

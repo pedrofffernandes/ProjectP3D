@@ -13,6 +13,7 @@ public:
 	Vect();
 	// General Construction Function
 	Vect(float x, float y, float z);
+	Vect(Vect* vect);
 	// destructor
 	~Vect();
 	
