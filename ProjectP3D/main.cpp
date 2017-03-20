@@ -1,9 +1,12 @@
+#pragma once
 #include <stdlib.h>
-#include <GL/glut.h>
 #include <iostream>
-#include <stdio.h>
-#include "scene.h"
 #include <vector>
+#include <stdio.h>
+#include <GL/glut.h>
+
+#include "scene.h"
+
 
 #define MAX_DEPTH 6
 #define EPSILON 1e-4
@@ -31,6 +34,7 @@ void reshape(int w, int h)
 
 void drawScene()
 {	
+
 	for (int y = 0; y < RES_Y; y++)
 	{
 		for (int x = 0; x < RES_X; x++)
@@ -38,7 +42,6 @@ void drawScene()
 			Ray * ray = scene->getCamera()->PrimaryRay(x, y);
 			Vect * color = rayTracing(ray, 1, IOR); //depth=1, ior=1.0
 			glBegin(GL_POINTS);
-			//std::cout << color->getX() << "   " << color->getY() << "   " << color->getZ() << '\n';
 			glColor3f(color->getX(), color->getY(), color->getZ());
 			glVertex2f(x, y);
 			glEnd();
@@ -61,7 +64,7 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 		if (distNew > EPSILON && distNew < dist) {			//If distance is smaller than all previous distances
 			dist = distNew;									//Then save distance and object
 			closest = (Obj*)*itO;
-		}		
+		}
 	}
 	if (closest == nullptr)									//If the ray doesn't intersect any object
 		return scene->getBackground();						
@@ -89,10 +92,10 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 		}
 
 	}
-
+	
 	if (depth >= MAX_DEPTH)												
 		return color;
-
+	
 	//Reflection
 	if (closest->getMat()->getKs() > 0) {					//If material is reflective
 		Vect * I = ray->getD();								//Compute reflection direction
