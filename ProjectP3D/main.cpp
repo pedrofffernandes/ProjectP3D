@@ -1,13 +1,25 @@
-#include <stdlib.h>
-#include <GL/glut.h>
-#include <iostream>
-#include <stdio.h>
-#include "scene.h"
-#include <vector>
+#include "Header.h"
 
 #define MAX_DEPTH 6
 #define EPSILON 1e-4
 #define IOR 1.0
+
+#include <chrono>
+
+#define TIMING
+
+#ifdef TIMING
+#define INIT_TIMER auto start = std::chrono::high_resolution_clock::now();
+#define START_TIMER  start = std::chrono::high_resolution_clock::now();
+#define STOP_TIMER(name)  std::cout << "RUNTIME of " << name << ": " << \
+    std::chrono::duration_cast<std::chrono::milliseconds>( \
+            std::chrono::high_resolution_clock::now()-start \
+    ).count() << " ms " << std::endl; 
+#else
+#define INIT_TIMER
+#define START_TIMER
+#define STOP_TIMER(name)
+#endif
 
 Scene * scene = NULL;
 int RES_X, RES_Y;
@@ -31,6 +43,8 @@ void reshape(int w, int h)
 
 void drawScene()
 {	
+	INIT_TIMER
+	START_TIMER
 	for (int y = 0; y < RES_Y; y++)
 	{
 		for (int x = 0; x < RES_X; x++)
@@ -44,8 +58,8 @@ void drawScene()
 			glEnd();
 			glFlush();
 		}
-	}
-	
+	} 
+	STOP_TIMER("Fim")
 	printf("Terminou!\n");
 }
 
@@ -133,22 +147,7 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 			Vect * refractColor = rayTracing(refractRay, depth + 1, ior);			//Compute refraction color
 			color = color->add(refractColor->multiply(closest->getMat()->getT()));	//Add refraction color to pixel
 		}
-
-		/*
-		Vect * I = ray->getD();
-		Vect * IT = (normal->multiply(2 * I->dotP(normal)))->minus(I);
-		Vect * t = IT->normalize();
-		float sin = IT->length();
-		Vect * sint = t->multiply(sin);
-		Vect * cosN = normal->multiply(-1*sqrt(1 - sin*sin));
-		Vect * R = sint->add(cosN);
-		Ray * refractedRay = new Ray(hit->add(R->multiply(EPSILON)), R);
-		Vect * refractedColor = rayTracing(refractedRay, depth + 1, ior);
-		//R = sint+ cos-n
-		*/
 	}
-	
-
 	return color;
 }
 
@@ -172,7 +171,7 @@ bool inShadow(Ray* ray) {
 int main(int argc, char**argv)
 {
 	scene = new Scene();
-	if (!(scene->load_nff("test_scenes/mount_low.nff"))) return 0;
+	if (!(scene->load_nff("test_scenes/balls_high.nff"))) return 0;
 	
 
 	

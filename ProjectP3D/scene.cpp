@@ -297,7 +297,7 @@ void Scene::parsePolygon(FILE * file)
 	if (d == 3) {
 		parseTriangle(file);
 	} else {
-		parseBigPoly(file, d);
+		//parseBigPoly(file, d);
 	}
 }
 
@@ -327,7 +327,7 @@ void Scene::parseTriangle(FILE * file)
 	Triangle* triangle = new Triangle(point1, point2, point3, mat);
 	this->addObject(triangle);
 }
-
+/*
 void Scene::parseBigPoly(FILE * file, int d)
 {
 	float x, y, z;
@@ -343,7 +343,7 @@ void Scene::parseBigPoly(FILE * file, int d)
 		bigpoly->addPoint(point);
 	}
 }
-
+*/
 /*
 void Scene::parseCone(FILE * file) {
 	vec3 base;

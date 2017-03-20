@@ -19,14 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BigPoly.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="material.cpp" />
     <ClCompile Include="obj.cpp" />
     <ClCompile Include="plane.cpp" />
-    <ClCompile Include="Polygon.cpp" />
     <ClCompile Include="Ray.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="sphere.cpp" />
@@ -34,13 +32,12 @@
     <ClCompile Include="Vect.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BigPoly.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Header.h" />
     <ClInclude Include="light.h" />
     <ClInclude Include="material.h" />
     <ClInclude Include="obj.h" />
     <ClInclude Include="plane.h" />
-    <ClInclude Include="Polygon.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="sphere.h" />

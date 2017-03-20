@@ -1,5 +1,4 @@
 #include "Triangle.h"
-#include <iostream>
 #define EPSILON 1e-4
 
 
@@ -15,6 +14,8 @@ Triangle::Triangle(Vect * point1, Vect * point2, Vect * point3, Material * mat) 
 	_n = p12->crossP(p13);
 	_n = _n->normalize();
 	_d = _n->dotP(_point1->multiply(-1));
+
+	_i = _n->max();
 }
 
 Triangle::~Triangle()
@@ -31,11 +32,11 @@ float Triangle::intersect(Ray * ray)
 	if (t < EPSILON) {
 		return 0.0;
 	}
-	int i = _n->max();
+
 	Vect* point = ray->getO()->add(ray->getD()->multiply(t));
-	Vect* a = point->minus(_point1)->r2D2(i);
-	Vect* b = _point2->minus(_point1)->r2D2(i);
-	Vect* c = _point3->minus(_point1)->r2D2(i);
+	Vect* a = point->minus(_point1)->r2D2(_i);
+	Vect* b = _point2->minus(_point1)->r2D2(_i);
+	Vect* c = _point3->minus(_point1)->r2D2(_i);
 
 	float deno = b->det2D(c);
 	float alfa = a->det2D(c) / deno;
