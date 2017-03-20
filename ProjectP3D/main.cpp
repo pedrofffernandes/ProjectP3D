@@ -57,6 +57,8 @@ void drawScene()
 			glVertex2f(x, y);
 			glEnd();
 			glFlush();
+			delete ray;
+			delete color;
 		}
 	} 
 	STOP_TIMER("Fim")
@@ -171,12 +173,12 @@ bool inShadow(Ray* ray) {
 int main(int argc, char**argv)
 {
 	scene = new Scene();
-	if (!(scene->load_nff("test_scenes/balls_high.nff"))) return 0;
+	if (!(scene->load_nff("test_scenes/balls_medium.nff"))) return 0;
 	
 
 	
-	RES_X = scene->getCamera()->getResX();
-	RES_Y = scene->getCamera()->getResY();
+	RES_X = scene->getCamera()->getResX()/2;
+	RES_Y = scene->getCamera()->getResY()/2;
 	
 	printf("resx = %d resy= %d.\n", RES_X, RES_Y);
 

@@ -1,5 +1,5 @@
 #include "Ray.h"
-
+#include <iostream>
 
 
 Ray::Ray(Vect* origin, Vect* direction)
