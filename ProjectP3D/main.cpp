@@ -71,6 +71,8 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 	// test...
 	// another tes..
 
+	// another line of code
+
 	float dist = 9999, distNew = 0;
 	for (itO = objs.begin(); itO != objs.end(); itO++) {	//Iterates over all objects
 		distNew = ((Obj*)*itO)->intersect(ray);				//Intersect returns distance from hitpoint to camera
