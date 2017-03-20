@@ -79,14 +79,19 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 
 				color = color->add(difuse);					
 				color = color->add(specular);
+				delete difuse;
+				delete specular;
 			}
-
+			delete newRay;
 		}
-
+		delete L;
 	}
 
-	if (depth >= MAX_DEPTH)												
+	if (depth >= MAX_DEPTH) {
+		delete hit;
+		delete normal;
 		return color;
+	}
 
 	//Reflection
 	if (closest->getMat()->getKs() > 0) {					//If material is reflective
@@ -97,6 +102,10 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 		Ray * reflectRay = new Ray(hit->add(R->multiply(EPSILON)), R);			//Create reflection ray
 		Vect * reflectColor = rayTracing(reflectRay, depth + 1, ior);			//Compute reflection color
 		color = color->add(reflectColor->multiply(closest->getMat()->getKs())); //Add color to pixel color
+		delete V;
+		delete R;
+		delete reflectRay;
+		delete reflectColor;
 	}
 
 	//Refraction
@@ -127,8 +136,14 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 			Ray * refractRay = new Ray(hit->add(T->multiply(EPSILON)), T);			//Create refraction ray
 			Vect * refractColor = rayTracing(refractRay, depth + 1, ior);			//Compute refraction color
 			color = color->add(refractColor->multiply(closest->getMat()->getT()));	//Add refraction color to pixel
+			delete I;
+			delete T;
+			delete refractRay;
+			delete refractColor;
 		}
 	}
+	delete normal;
+	delete hit;
 	return color;
 }
 
