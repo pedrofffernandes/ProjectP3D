@@ -1,16 +1,25 @@
-#pragma once
-#include <stdlib.h>
-#include <iostream>
-#include <vector>
-#include <stdio.h>
-#include <GL/glut.h>
-
-#include "scene.h"
-
+#include "Header.h"
 
 #define MAX_DEPTH 6
 #define EPSILON 1e-4
 #define IOR 1.0
+
+#include <chrono>
+
+#define TIMING
+
+#ifdef TIMING
+#define INIT_TIMER auto start = std::chrono::high_resolution_clock::now();
+#define START_TIMER  start = std::chrono::high_resolution_clock::now();
+#define STOP_TIMER(name)  std::cout << "RUNTIME of " << name << ": " << \
+    std::chrono::duration_cast<std::chrono::milliseconds>( \
+            std::chrono::high_resolution_clock::now()-start \
+    ).count() << " ms " << std::endl; 
+#else
+#define INIT_TIMER
+#define START_TIMER
+#define STOP_TIMER(name)
+#endif
 
 Scene * scene = NULL;
 int RES_X, RES_Y;
@@ -34,7 +43,8 @@ void reshape(int w, int h)
 
 void drawScene()
 {	
-
+	INIT_TIMER
+	START_TIMER
 	for (int y = 0; y < RES_Y; y++)
 	{
 		for (int x = 0; x < RES_X; x++)
@@ -42,13 +52,14 @@ void drawScene()
 			Ray * ray = scene->getCamera()->PrimaryRay(x, y);
 			Vect * color = rayTracing(ray, 1, IOR); //depth=1, ior=1.0
 			glBegin(GL_POINTS);
+			//std::cout << color->getX() << "   " << color->getY() << "   " << color->getZ() << '\n';
 			glColor3f(color->getX(), color->getY(), color->getZ());
 			glVertex2f(x, y);
 			glEnd();
 			glFlush();
 		}
-	}
-	
+	} 
+	STOP_TIMER("Fim")
 	printf("Terminou!\n");
 }
 
@@ -64,7 +75,7 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 		if (distNew > EPSILON && distNew < dist) {			//If distance is smaller than all previous distances
 			dist = distNew;									//Then save distance and object
 			closest = (Obj*)*itO;
-		}
+		}		
 	}
 	if (closest == nullptr)									//If the ray doesn't intersect any object
 		return scene->getBackground();						
@@ -92,10 +103,10 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 		}
 
 	}
-	
+
 	if (depth >= MAX_DEPTH)												
 		return color;
-	
+
 	//Reflection
 	if (closest->getMat()->getKs() > 0) {					//If material is reflective
 		Vect * I = ray->getD();								//Compute reflection direction
@@ -136,22 +147,7 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 			Vect * refractColor = rayTracing(refractRay, depth + 1, ior);			//Compute refraction color
 			color = color->add(refractColor->multiply(closest->getMat()->getT()));	//Add refraction color to pixel
 		}
-
-		/*
-		Vect * I = ray->getD();
-		Vect * IT = (normal->multiply(2 * I->dotP(normal)))->minus(I);
-		Vect * t = IT->normalize();
-		float sin = IT->length();
-		Vect * sint = t->multiply(sin);
-		Vect * cosN = normal->multiply(-1*sqrt(1 - sin*sin));
-		Vect * R = sint->add(cosN);
-		Ray * refractedRay = new Ray(hit->add(R->multiply(EPSILON)), R);
-		Vect * refractedColor = rayTracing(refractedRay, depth + 1, ior);
-		//R = sint+ cos-n
-		*/
 	}
-	
-
 	return color;
 }
 
@@ -175,7 +171,7 @@ bool inShadow(Ray* ray) {
 int main(int argc, char**argv)
 {
 	scene = new Scene();
-	if (!(scene->load_nff("test_scenes/mount_low.nff"))) return 0;
+	if (!(scene->load_nff("test_scenes/balls_high.nff"))) return 0;
 	
 
 	

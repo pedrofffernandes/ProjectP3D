@@ -5,6 +5,7 @@ class Sphere : public Obj
 {
 	Vect* _position;
 	float _radius;
+	float _radiusSquare;
 
 public:
 	Sphere(Vect* position, float r, Material * mat);

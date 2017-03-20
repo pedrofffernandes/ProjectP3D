@@ -8,6 +8,8 @@ class Triangle :
 	Vect* _point3;
 	Vect* _n;
 	float _d;
+	//Index of normal's biggest component
+	int _i;
 
 public:
 	Triangle(Vect* point1, Vect* point2, Vect* point3, Material* mat);
