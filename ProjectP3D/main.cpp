@@ -52,13 +52,10 @@ void drawScene()
 			Ray * ray = scene->getCamera()->PrimaryRay(x, y);
 			Vect * color = rayTracing(ray, 1, IOR); //depth=1, ior=1.0
 			glBegin(GL_POINTS);
-			//std::cout << color->getX() << "   " << color->getY() << "   " << color->getZ() << '\n';
 			glColor3f(color->getX(), color->getY(), color->getZ());
 			glVertex2f(x, y);
 			glEnd();
 			glFlush();
-			delete ray;
-			delete color;
 		}
 	} 
 	STOP_TIMER("Fim")
@@ -175,14 +172,10 @@ int main(int argc, char**argv)
 	scene = new Scene();
 	if (!(scene->load_nff("test_scenes/balls_medium.nff"))) return 0;
 	
-
-	
-	RES_X = scene->getCamera()->getResX()/2;
-	RES_Y = scene->getCamera()->getResY()/2;
-	
+	RES_X = scene->getCamera()->getResX();
+	RES_Y = scene->getCamera()->getResY();
 	printf("resx = %d resy= %d.\n", RES_X, RES_Y);
 
-	
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA);
 

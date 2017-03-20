@@ -50,7 +50,5 @@ Vect * Light::getSpecular(Vect * normal, Vect * L, Material * mat, Vect* v)
 	Vect* result = mat->getRGB()->multiply(ks)->multiply(rv);
 	result = (_rgb->lineP(result));
 
-	
-
 	return result;
 }
