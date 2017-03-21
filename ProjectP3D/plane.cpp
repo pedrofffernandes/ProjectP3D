@@ -12,7 +12,7 @@ Plane::Plane(Vect* point1, Vect* point2, Vect* point3, Material * mat) : Obj(mat
 	Vect * p13 = p3->minus(_point1);
 	//Set normal
 	_n = p12->crossP(p13);
-	_n = _n->normalize();	
+	_n->normalize();	
 	delete p2;
 	delete p3;
 }

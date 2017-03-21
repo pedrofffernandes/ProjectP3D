@@ -26,15 +26,20 @@ Vect::~Vect()
 {
 }
 
+// Normalization
+/// Changes this vector to be normalized
+/// A normalized vector, is the same vector
+/// but with length = 1
 Vect * Vect::normalize() {
 	float length = this->length();
-	float x, y, z;
-	x = _x / length;
-	y = _y / length;
-	z = _z / length;
-	return new Vect(x, y, z);
+	_x = _x / length;
+	_y = _y / length;
+	_z = _z / length;
+	return this;
 }
 
+// Vector Subtraction
+/// Subtracts this vector with the given vector
 Vect * Vect::minus(Vect * vect) {
 	_x = _x - vect->getX();
 	_y = _y - vect->getY();

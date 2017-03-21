@@ -46,6 +46,5 @@ public:
 	float getX() { return _x; }
 	float getY() { return _y; }
 	float getZ() { return _z; }
-
 };
 #endif // !_VECT_H

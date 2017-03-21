@@ -44,6 +44,7 @@ void drawScene()
 	printf("Terminou!\n");
 }
 
+
 Vect * rayTracing(Ray * ray, int depth, float ior) {
 	std::list<Obj*> objs = scene->getObjects();
 	std::list<Obj*>::iterator itO;
@@ -114,6 +115,7 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 		delete reflectRay;
 		delete reflectColor;
 	}
+	
 
 	//Refraction
 	if (closest->getMat()->getT() > 0) {
@@ -175,7 +177,7 @@ bool inShadow(Ray* ray) {
 int main(int argc, char**argv)
 {
 	scene = new Scene();
-	if (!(scene->load_nff("test_scenes/mount_low.nff"))) return 0;
+	if (!(scene->load_nff("test_scenes/mount_high.nff"))) return 0;
 	
 	RES_X = scene->getCamera()->getResX();
 	RES_Y = scene->getCamera()->getResY();
