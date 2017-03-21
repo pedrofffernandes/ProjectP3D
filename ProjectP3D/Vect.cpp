@@ -120,11 +120,14 @@ Vect * Vect::r2D2(int i)
 {
 	switch (i) {
 	case 0:
-		return new Vect(_y, _z, 0);
+		_x = _y;
+		_y = _z;
+		return this;
 	case 1:
-		return new Vect(_x, _z, 0);
+		_y = _z;
+		return this;
 	case 2:
-		return new Vect(_x, _y, 0);
+		return this;
 	}
 	return nullptr;
 }
