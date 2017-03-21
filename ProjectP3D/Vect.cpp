@@ -8,20 +8,17 @@ Vect::Vect()
 	_y = 0;
 	_z = 0;
 }
-
 Vect::Vect(float x, float y, float z)
 {
 	_x = x;
 	_y = y;
 	_z = z;
 }
-
 Vect::Vect(Vect * vect) {
 	_x = vect->getX();
 	_y = vect->getY();
 	_z = vect->getZ();
 }
-
 Vect::~Vect()
 {
 }
@@ -69,10 +66,15 @@ float Vect::dotP(Vect * vect) {
 	return _x * vect->getX() + _y * vect->getY() + _z * vect->getZ();
 }
 
+// Length (Magnitude)
+/// Returns the vector magnitude (length)
 float Vect::length() {
 	return sqrt(_x*_x + _y*_y + _z*_z);
 }
 
+// Scalar Multiplication
+/// CHANGES THIS VECTOR
+/// returns this vector multiplyed by a scalar
 Vect * Vect::multiply(float f) {
 	_x = _x * f;
 	_y = _y * f;
@@ -80,6 +82,10 @@ Vect * Vect::multiply(float f) {
 	return this;
 }
 
+
+// Vector Addition
+/// CHANGES THIS VECTOR
+/// returns this vector added by another vector
 Vect * Vect::add(Vect * vect) {
 	_x = _x + vect->getX();
 	_y = _y + vect->getY();
@@ -88,7 +94,7 @@ Vect * Vect::add(Vect * vect) {
 }
 
 // Color multiplication
-/// ONLY USE when the applying the Vect class to colors
+/// ONLY USE when the applying the Vect class to <COLOR>
 /// returns a color multiplied by the vector coordinates
 Vect * Vect::colorMultiplication(Vect * vect)
 {
@@ -130,23 +136,43 @@ int Vect::max()
 	return 2;  /// Z has the highest value
 }
 
+
+// Vector Determinant
+/// ONLY APPLIES TO <2D_VECTORS>
+/// computes and returns the determinant of the vector
 float Vect::det2D(Vect * vect)
 {
 	return _x*vect->getY() - _y*vect->getX();
 }
 
+
+// Projection of a 3D Vector into 2D
+/// Part of the Badouel's Ray-Triangle Intersection algorithmn
+/// used in the Triangle::Intersect(Ray*) method
+/// Motivation: when using 2D Vectors only
+/// the first 2 coordinates (x,y) are used
+/// the z coordinate value is ignored
+/// ex: when projecting in the x plane,
+/// the x coordinate value must be cut off
+/// and the y and z coordinates must be preserved
+/// so it returns this 3D Vector but with the
+/// y value in the x coordinate and the z value
+/// in the y coordinate
 Vect * Vect::r2D2(int i)
 {
 	switch (i) {
-	case 0:
-		_x = _y;
-		_y = _z;
-		return this;
-	case 1:
-		_y = _z;
-		return this;
-	case 2:
-		return this;
+		case 0:
+			/// Projecting in the X plane
+			_x = _y;
+			_y = _z;
+			break;
+		case 1:
+			/// Projecting in the Y plane
+			_y = _z;
+			break;
+		case 2:
+			/// Projecting in the Z plane
+			break;
 	}
-	return nullptr;
+	return this;
 }
