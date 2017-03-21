@@ -54,6 +54,7 @@ float Triangle::intersect(Ray * ray)
 	delete p2;
 	delete p3;
 	delete point;
+	delete epsilon;
 
 	if (alfa >= 0 && beta >= 0 && alfa + beta <= 1)
 		return t;
@@ -62,5 +63,5 @@ float Triangle::intersect(Ray * ray)
 
 Vect * Triangle::getNormal(Vect * hit)
 {
-	return _n;
+	return new Vect(_n);
 }

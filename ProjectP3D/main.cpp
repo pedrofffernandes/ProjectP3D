@@ -66,7 +66,7 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 	std::list<Light*>::iterator itL;
 	Vect* hit = ray->getHitPoint(dist);
 	Vect* color = new Vect();
-	Vect* normal = new Vect(closest->getNormal(hit));
+	Vect* normal = closest->getNormal(hit);
 
 	//Local ilumination
 	for (itL = lights.begin(); itL != lights.end(); itL++) {			//Iterates over all the lights
@@ -83,9 +83,12 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 
 				color->add(difuse);					
 				color->add(specular);
-				delete difuse;
 				delete specular;
+				delete rayD;
+				delete difuse;
 			}
+			delete newO;
+			delete newD;
 			delete shadowFeeler;
 		}
 		delete lightD;
@@ -112,6 +115,8 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 		color->add(reflectColor);											//Add color to pixel color
 		delete V;
 		delete I;
+		delete newO;
+		delete newD;
 		delete reflectRay;
 		delete reflectColor;
 	}
@@ -148,9 +153,12 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 			refractColor->multiply(closest->getMat()->getT());					//Multiply by intensity
 			color->add(refractColor);											//Add refraction color to pixel
 			delete I;
+			delete newO;
+			delete newD;
 			delete refractRay;
 			delete refractColor;
 		}
+		delete n;
 	}
 	delete normal;
 	delete hit;
@@ -177,7 +185,7 @@ bool inShadow(Ray* ray) {
 int main(int argc, char**argv)
 {
 	scene = new Scene();
-	if (!(scene->load_nff("test_scenes/mount_high.nff"))) return 0;
+	if (!(scene->load_nff("test_scenes/mount_low.nff"))) return 0;
 	
 	RES_X = scene->getCamera()->getResX();
 	RES_Y = scene->getCamera()->getResY();

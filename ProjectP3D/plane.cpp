@@ -35,5 +35,5 @@ float Plane::intersect(Ray * ray)
 
 Vect * Plane::getNormal(Vect * point)
 {
-	return _n;
+	return new Vect(_n);
 }
