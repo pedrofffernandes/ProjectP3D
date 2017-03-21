@@ -50,7 +50,8 @@ float Sphere::intersect(Ray * ray)
 		return b + sqrt(R);
 }
 
-Vect * Sphere::getNormal(Vect * point)
-{
-	return point->minus(_position)->normalize();
+Vect * Sphere::getNormal(Vect * point) {
+	Vect * result = new Vect(point);
+	result->minus(_position);
+	return result->normalize();
 }

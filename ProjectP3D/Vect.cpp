@@ -41,7 +41,10 @@ Vect * Vect::normalize() {
 // Vector Subtraction
 /// Subtracts this vector with the given vector
 Vect * Vect::minus(Vect * vect) {
-	return new Vect(_x - vect->getX(), _y - vect->getY(), _z - vect->getZ());
+	_x = _x - vect->getX();
+	_y = _y - vect->getY();
+	_z = _z - vect->getZ();
+	return this;
 }
 
 Vect * Vect::crossP(Vect * vect) {
@@ -61,28 +64,25 @@ float Vect::length() {
 }
 
 Vect * Vect::multiply(float f) {
-	float x, y, z;
-	x = _x * f;
-	y = _y * f;
-	z = _z * f;
-	return new Vect(x, y, z);
+	_x = _x * f;
+	_y = _y * f;
+	_z = _z * f;
+	return this;
 }
 
 Vect * Vect::add(Vect * vect) {
-	float x, y, z;
-	x = _x + vect->getX();
-	y = _y + vect->getY();
-	z = _z + vect->getZ();
-	return new Vect(x, y, z);
+	_x = _x + vect->getX();
+	_y = _y + vect->getY();
+	_z = _z + vect->getZ();
+	return this;
 }
 
 Vect * Vect::lineP(Vect * vect)
 {
-	float x, y, z;
-	x = _x * vect->getX();
-	y = _y * vect->getY();
-	z = _z * vect->getZ();
-	return new Vect(x, y, z);
+	_x = _x * vect->getX();
+	_y = _y * vect->getY();
+	_z = _z * vect->getZ();
+	return this;
 }
 
 Vect * Vect::positive()
@@ -125,11 +125,14 @@ Vect * Vect::r2D2(int i)
 {
 	switch (i) {
 	case 0:
-		return new Vect(_y, _z, 0);
+		_x = _y;
+		_y = _z;
+		return this;
 	case 1:
-		return new Vect(_x, _z, 0);
+		_y = _z;
+		return this;
 	case 2:
-		return new Vect(_x, _y, 0);
+		return this;
 	}
 	return nullptr;
 }
