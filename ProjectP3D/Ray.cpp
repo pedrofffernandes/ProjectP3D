@@ -4,8 +4,8 @@
 
 Ray::Ray(Vect* origin, Vect* direction) {
 	_origin = origin;
-	_direction = direction;
-	_direction = direction->normalize();
+	_direction = new Vect(direction);
+	_direction->normalize();
 }
 
 Ray::~Ray() {
@@ -23,8 +23,8 @@ Vect * Ray::getO()
 
 Vect * Ray::getHitPoint(float dist)
 {
-	Vect* hit = _direction->multiply(dist);
-	hit = hit->add(_origin);
-	return hit;
+	Vect* hit = new Vect(_direction);
+	hit->multiply(dist);
+	return hit->add(_origin);
 }
 

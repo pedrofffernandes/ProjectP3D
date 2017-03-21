@@ -18,21 +18,26 @@ void Light::setColor(Vect * rgb) {
 	_rgb = rgb;
 }
 
-Vect * Light::getLVect(Vect * hit)
-{	
-	Vect * lVect = _position->minus(hit);
-	lVect = lVect->normalize();
-	return lVect;
+// Shadow Feeler
+/// Receives an intersection point with an object
+/// and returns a vector that goes from the
+/// intersection to the light source (Shadow Feeler)
+Vect * Light::getLVect(Vect * hit) {	
+	Vect * result = new Vect(_position);
+	result->minus(hit);
+	result->normalize();
+	return result;
 }
 
 Vect * Light::getDiffuse(Vect * normal, Vect* L, Material * mat){
 
 	float kd = mat->getKd();
 	float nl = normal->dotP(L);
-	//std::cout << nl << '\n';
 	
-	Vect* result = mat->getRGB()->multiply(kd)->multiply(nl);
-	result = (_rgb->lineP(result));
+	Vect* result = new Vect(mat->getRGB());
+	result->multiply(kd);
+	result->multiply(nl);
+	result->colorMultiplication(_rgb);
 	return result;
 }
 
@@ -41,14 +46,20 @@ Vect * Light::getSpecular(Vect * normal, Vect * L, Material * mat, Vect* v)
 	float ks = mat->getKs();
 	float shine = mat->getShine();
 
-	Vect * I = L->multiply(-1);
-	Vect * V = normal->multiply(-2 * I->dotP(normal));
-	Vect * R = I->add(V);
+	Vect * I = new Vect(L);
+	I->multiply(-1);
+	Vect * V = new Vect(normal);
+	V->multiply(-2 * I->dotP(normal));
+	I->add(V);
 
-	float rv = pow((R->dotP(v) < EPSILON) ? EPSILON : R->dotP(v), shine);
+	float rv = pow((I->dotP(v) < EPSILON) ? EPSILON : I->dotP(v), shine);
 
-	Vect* result = mat->getRGB()->multiply(ks)->multiply(rv);
-	result = (_rgb->lineP(result));
+	Vect* result = new Vect(mat->getRGB());
+	result->multiply(ks);
+	result->multiply(rv);
+	result->colorMultiplication(_rgb);
 
+	delete I;
+	delete V;
 	return result;
 }

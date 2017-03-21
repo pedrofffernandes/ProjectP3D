@@ -13,6 +13,7 @@ public:
 	Vect();
 	// General Construction Function
 	Vect(float x, float y, float z);
+	Vect(Vect* vect);
 	// destructor
 	~Vect();
 	
@@ -30,8 +31,8 @@ public:
 	Vect * multiply(float f);
 	//Adds two vectors
 	Vect * add(Vect * vect);
-	//Multiplies the elements of the vectors
-	Vect * lineP(Vect * vect);
+	// Color multiplication
+	Vect * colorMultiplication(Vect * vect);
 	//absf to all vector elements
 	Vect * positive();
 
@@ -45,6 +46,5 @@ public:
 	float getX() { return _x; }
 	float getY() { return _y; }
 	float getZ() { return _z; }
-
 };
 #endif // !_VECT_H
