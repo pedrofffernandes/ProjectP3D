@@ -4,8 +4,8 @@
 
 Ray::Ray(Vect* origin, Vect* direction) {
 	_origin = origin;
-	_direction = direction;
-	_direction = direction->normalize();
+	Vect * dir = new Vect(direction);
+	_direction = dir->normalize();
 }
 
 Ray::~Ray() {

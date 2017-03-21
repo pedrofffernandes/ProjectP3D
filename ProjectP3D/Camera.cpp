@@ -28,10 +28,8 @@ Camera::Camera(Vect* vrp, Vect* vpn, Vect* vuv, int resX, int resY, float fov, f
 	_h = 2 * _d * tan(fov / 2);
 	_w = (resX / resY) * _h;
 
-
-	_ze = (_vrp->minus(_vpn))->normalize();
-	
-	_xe = (_vuv->crossP(_ze))->normalize();
+	_ze = _vrp->minus(_vpn)->normalize();
+	_xe = _vuv->crossP(_ze)->normalize();
 	_ye = _ze->crossP(_xe);
 	
 }

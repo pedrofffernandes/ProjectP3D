@@ -18,11 +18,15 @@ void Light::setColor(Vect * rgb) {
 	_rgb = rgb;
 }
 
+
+// Shadow Feeler
+/// Receives an intersection point with an object
+/// and returns a vector that goes from the
+/// intersection to the light source (Shadow Feeler)
 Vect * Light::getLVect(Vect * hit)
 {	
-	Vect * lVect = _position->minus(hit);
-	lVect = lVect->normalize();
-	return lVect;
+	Vect * shadow_feeler = _position->minus(hit)->normalize();
+	return shadow_feeler;
 }
 
 Vect * Light::getDiffuse(Vect * normal, Vect* L, Material * mat){
