@@ -64,11 +64,10 @@ Vect * Vect::multiply(float f) {
 }
 
 Vect * Vect::add(Vect * vect) {
-	float x, y, z;
-	x = _x + vect->getX();
-	y = _y + vect->getY();
-	z = _z + vect->getZ();
-	return new Vect(x, y, z);
+	_x = _x + vect->getX();
+	_y = _y + vect->getY();
+	_z = _z + vect->getZ();
+	return this;
 }
 
 Vect * Vect::lineP(Vect * vect)

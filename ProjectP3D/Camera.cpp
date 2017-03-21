@@ -60,7 +60,6 @@ Ray * Camera::PrimaryRay(int x, int y) {
 	delete vz;
 	delete vy;
 	delete vx;
-	delete d;
 	return result;
 }
 

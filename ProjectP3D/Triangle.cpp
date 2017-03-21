@@ -34,7 +34,8 @@ float Triangle::intersect(Ray * ray)
 		return 0.0;
 	}
 
-	Vect* point = ray->getO()->add(ray->getD()->multiply(t));
+	Vect* point = new Vect(ray->getO());
+	point->add(ray->getD()->multiply(t));
 	Vect* a = point->minus(_point1)->r2D2(_i);
 	Vect* b = _point2->minus(_point1)->r2D2(_i);
 	Vect* c = _point3->minus(_point1)->r2D2(_i);

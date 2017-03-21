@@ -43,16 +43,14 @@ Vect * Light::getSpecular(Vect * normal, Vect * L, Material * mat, Vect* v)
 
 	Vect * I = L->multiply(-1);
 	Vect * V = normal->multiply(-2 * I->dotP(normal));
-	Vect * R = I->add(V);
+	I->add(V);
 
-	float rv = pow((R->dotP(v) < EPSILON) ? EPSILON : R->dotP(v), shine);
+	float rv = pow((I->dotP(v) < EPSILON) ? EPSILON : I->dotP(v), shine);
 
 	Vect* result = mat->getRGB()->multiply(ks)->multiply(rv);
 	result->lineP(_rgb);
 
 	delete I;
 	delete V;
-	delete R;
-
 	return result;
 }
