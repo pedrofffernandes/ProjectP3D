@@ -4,23 +4,6 @@
 #define EPSILON 1e-4
 #define IOR 1.0
 
-#include <chrono>
-
-#define TIMING
-
-#ifdef TIMING
-#define INIT_TIMER auto start = std::chrono::high_resolution_clock::now();
-#define START_TIMER  start = std::chrono::high_resolution_clock::now();
-#define STOP_TIMER(name)  std::cout << "RUNTIME of " << name << ": " << \
-    std::chrono::duration_cast<std::chrono::milliseconds>( \
-            std::chrono::high_resolution_clock::now()-start \
-    ).count() << " ms " << std::endl; 
-#else
-#define INIT_TIMER
-#define START_TIMER
-#define STOP_TIMER(name)
-#endif
-
 Scene * scene = NULL;
 int RES_X, RES_Y;
 Vect * rayTracing(Ray * ray, int depth, float ior);
@@ -43,8 +26,6 @@ void reshape(int w, int h)
 
 void drawScene()
 {	
-	INIT_TIMER
-	START_TIMER
 	for (int y = 0; y < RES_Y; y++)
 	{
 		for (int x = 0; x < RES_X; x++)
@@ -56,9 +37,10 @@ void drawScene()
 			glVertex2f(x, y);
 			glEnd();
 			glFlush();
+			delete ray;
+			delete color;
 		}
 	} 
-	STOP_TIMER("Fim")
 	printf("Terminou!\n");
 }
 
@@ -77,13 +59,13 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 		}		
 	}
 	if (closest == nullptr)									//If the ray doesn't intersect any object
-		return scene->getBackground();						
+		return new Vect(scene->getBackground());						
 
 	std::list<Light*> lights = scene->getLights();
 	std::list<Light*>::iterator itL;
 	Vect* hit = ray->getHitPoint(dist);
 	Vect* color = new Vect();
-	Vect* normal = closest->getNormal(hit);
+	Vect* normal = new Vect(closest->getNormal(hit));
 
 	//Local ilumination
 	for (itL = lights.begin(); itL != lights.end(); itL++) {			//Iterates over all the lights
@@ -97,14 +79,19 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 
 				color = color->add(difuse);					
 				color = color->add(specular);
+				delete difuse;
+				delete specular;
 			}
-
+			delete newRay;
 		}
-
+		delete L;
 	}
 
-	if (depth >= MAX_DEPTH)												
+	if (depth >= MAX_DEPTH) {
+		delete hit;
+		delete normal;
 		return color;
+	}
 
 	//Reflection
 	if (closest->getMat()->getKs() > 0) {					//If material is reflective
@@ -115,6 +102,10 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 		Ray * reflectRay = new Ray(hit->add(R->multiply(EPSILON)), R);			//Create reflection ray
 		Vect * reflectColor = rayTracing(reflectRay, depth + 1, ior);			//Compute reflection color
 		color = color->add(reflectColor->multiply(closest->getMat()->getKs())); //Add color to pixel color
+		delete V;
+		delete R;
+		delete reflectRay;
+		delete reflectColor;
 	}
 
 	//Refraction
@@ -122,8 +113,8 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 		
 		float cosi = ray->getD()->dotP(normal);				//Get cos of Viewer and normal
 		float aux;
-		float iorM = ior;
-		float iorO = closest->getMat()->getIOR();
+		float iorM = ior;									//IOR medium
+		float iorO = closest->getMat()->getIOR();			//IOR object
 		Vect * n = normal;
 		if (cosi < 0) {										//If outside
 			cosi = -cosi;									//Turn cos positive
@@ -136,17 +127,21 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 
 		float eta = iorM / iorO;
 		float k = 1 - eta*eta * (1 - cosi*cosi);
-		if (k < 0) {
-			return new Vect();
-		} else {
+		if (k >= 0) {										//k<0 Total internal refraction
 			Vect * I = ray->getD()->multiply(eta);			//Compute refraction ray equation
 			n = n->multiply(eta * cosi - sqrtf(k));			//Using Ray Tracing: Texto Apoio
 			Vect* T = I->add(n);							//
 			Ray * refractRay = new Ray(hit->add(T->multiply(EPSILON)), T);			//Create refraction ray
 			Vect * refractColor = rayTracing(refractRay, depth + 1, ior);			//Compute refraction color
 			color = color->add(refractColor->multiply(closest->getMat()->getT()));	//Add refraction color to pixel
+			delete I;
+			delete T;
+			delete refractRay;
+			delete refractColor;
 		}
 	}
+	delete normal;
+	delete hit;
 	return color;
 }
 
@@ -170,10 +165,10 @@ bool inShadow(Ray* ray) {
 int main(int argc, char**argv)
 {
 	scene = new Scene();
-	if (!(scene->load_nff("test_scenes/mount_high.nff"))) return 0;
+	if (!(scene->load_nff("test_scenes/mount_low.nff"))) return 0;
 	
-	RES_X = scene->getCamera()->getResX()/8;
-	RES_Y = scene->getCamera()->getResY()/8;
+	RES_X = scene->getCamera()->getResX();
+	RES_Y = scene->getCamera()->getResY();
 	printf("resx = %d resy= %d.\n", RES_X, RES_Y);
 
 	glutInit(&argc, argv);

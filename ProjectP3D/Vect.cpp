@@ -16,6 +16,12 @@ Vect::Vect(float x, float y, float z)
 	_z = z;
 }
 
+Vect::Vect(Vect * vect) {
+	_x = vect->getX();
+	_y = vect->getY();
+	_z = vect->getZ();
+}
+
 Vect::~Vect()
 {
 }
@@ -88,14 +94,18 @@ int Vect::max()
 	Vect* n = this->positive();
 	if(n->getX() < n->getY()) {
 		if (n->getY() < n->getZ()) {
+			delete n;
 			return 2;
 		} else {
+			delete n;
 			return 1;
 		}
 	} else {
 		if (n->getX() < n->getZ()) {
+			delete n;
 			return 2;
 		} else {
+			delete n;
 			return 0;
 		}
 	}
