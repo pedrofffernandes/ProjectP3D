@@ -37,7 +37,7 @@ Vect * Light::getDiffuse(Vect * normal, Vect* L, Material * mat){
 	Vect* result = new Vect(mat->getRGB());
 	result->multiply(kd);
 	result->multiply(nl);
-	result->lineP(_rgb);
+	result->colorMultiplication(_rgb);
 	return result;
 }
 
@@ -57,7 +57,7 @@ Vect * Light::getSpecular(Vect * normal, Vect * L, Material * mat, Vect* v)
 	Vect* result = new Vect(mat->getRGB());
 	result->multiply(ks);
 	result->multiply(rv);
-	result->lineP(_rgb);
+	result->colorMultiplication(_rgb);
 
 	delete I;
 	delete V;

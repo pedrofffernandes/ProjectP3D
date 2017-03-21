@@ -39,6 +39,7 @@ Vect * Vect::normalize() {
 }
 
 // Vector Subtraction
+/// Changes this vector
 /// Subtracts this vector with the given vector
 Vect * Vect::minus(Vect * vect) {
 	_x = _x - vect->getX();
@@ -47,6 +48,11 @@ Vect * Vect::minus(Vect * vect) {
 	return this;
 }
 
+
+// Cross Product
+/// Receives a vector and returns a new
+/// vector which results in the cross product
+/// of this vector with the given vector
 Vect * Vect::crossP(Vect * vect) {
 	float x, y, z;
 	x = (_y * vect->getZ()) - (_z * vect->getY());
@@ -55,6 +61,10 @@ Vect * Vect::crossP(Vect * vect) {
 	return new Vect(x, y, z);
 }
 
+// Dot Product
+/// Receives a vector and returns a the 
+/// the result of the dot product between
+/// this vector and the given one
 float Vect::dotP(Vect * vect) {
 	return _x * vect->getX() + _y * vect->getY() + _z * vect->getZ();
 }
@@ -77,14 +87,23 @@ Vect * Vect::add(Vect * vect) {
 	return this;
 }
 
-Vect * Vect::lineP(Vect * vect)
+// Color multiplication
+/// ONLY USE when the applying the Vect class to colors
+/// returns a color multiplied by the vector coordinates
+Vect * Vect::colorMultiplication(Vect * vect)
 {
+	/// Multiplies the value of the RED value by X
 	_x = _x * vect->getX();
+	/// Multiplies the value of the GREEN value by Y
 	_y = _y * vect->getY();
+	/// Multiplies the value of the BLUE value by Z
 	_z = _z * vect->getZ();
 	return this;
 }
 
+// Positive
+/// Converts all the negative coordinates
+/// of the vector to their symmetric
 Vect * Vect::positive()
 {
 	float x, y, z;
@@ -94,26 +113,21 @@ Vect * Vect::positive()
 	return new Vect(x, y, z);
 }
 
+// Max
+/// Returns the an integer that serves
+/// to identify, which coordinate has the
+/// highest value
+/// IF x has the highest value, 0 is returned
+/// IF y has the highest value, 1 is returned
+/// IF z has the highest value, 2 is returned
 int Vect::max()
 {
 	Vect* n = this->positive();
-	if(n->getX() < n->getY()) {
-		if (n->getY() < n->getZ()) {
-			delete n;
-			return 2;
-		} else {
-			delete n;
-			return 1;
-		}
-	} else {
-		if (n->getX() < n->getZ()) {
-			delete n;
-			return 2;
-		} else {
-			delete n;
-			return 0;
-		}
-	}
+	if (n->getX() >= n->getY() && n->getX() >= n->getZ())
+		return 0; /// X has the highest value
+	if (n->getY() >= n->getZ())
+		return 1; /// Y has the highest value
+	return 2;  /// Z has the highest value
 }
 
 float Vect::det2D(Vect * vect)
