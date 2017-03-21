@@ -68,11 +68,6 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 
 	Obj* closest = nullptr;									//the closest object to the camera that the ray hits
 
-	// test...
-	// another tes..
-	// teste 2
-	// another line of code
-
 	float dist = 9999, distNew = 0;
 	for (itO = objs.begin(); itO != objs.end(); itO++) {	//Iterates over all objects
 		distNew = ((Obj*)*itO)->intersect(ray);				//Intersect returns distance from hitpoint to camera
@@ -175,10 +170,10 @@ bool inShadow(Ray* ray) {
 int main(int argc, char**argv)
 {
 	scene = new Scene();
-	if (!(scene->load_nff("test_scenes/balls_medium.nff"))) return 0;
+	if (!(scene->load_nff("test_scenes/mount_high.nff"))) return 0;
 	
-	RES_X = scene->getCamera()->getResX();
-	RES_Y = scene->getCamera()->getResY();
+	RES_X = scene->getCamera()->getResX()/8;
+	RES_Y = scene->getCamera()->getResY()/8;
 	printf("resx = %d resy= %d.\n", RES_X, RES_Y);
 
 	glutInit(&argc, argv);
