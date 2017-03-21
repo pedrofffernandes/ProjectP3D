@@ -18,11 +18,11 @@ void Light::setColor(Vect * rgb) {
 	_rgb = rgb;
 }
 
-Vect * Light::getLVect(Vect * hit)
-{	
-	Vect * lVect = _position->minus(hit);
-	lVect = lVect->normalize();
-	return lVect;
+Vect * Light::getLVect(Vect * hit) {	
+	Vect * result = new Vect(_position);
+	result->minus(hit);
+	result = result->normalize();
+	return result;
 }
 
 Vect * Light::getDiffuse(Vect * normal, Vect* L, Material * mat){

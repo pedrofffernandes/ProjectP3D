@@ -8,8 +8,10 @@ Triangle::Triangle(Vect * point1, Vect * point2, Vect * point3, Material * mat) 
 	_point1 = point1;
 	_point2 = point2;
 	_point3 = point3;
-	Vect * p12 = _point2->minus(_point1);
-	Vect * p13 = _point3->minus(_point1);
+	Vect * p2 = new Vect(point2);
+	Vect * p12 = p2->minus(_point1);
+	Vect * p3 = new Vect(point3);
+	Vect * p13 = p3->minus(_point1);
 	//Set normal
 	_n = p12->crossP(p13);
 	_n = _n->normalize();
@@ -17,8 +19,8 @@ Triangle::Triangle(Vect * point1, Vect * point2, Vect * point3, Material * mat) 
 	_d = _n->dotP(p1->multiply(-1));	
 
 	_i = _n->max();
-	delete p12;
-	delete p13;
+	delete p2;
+	delete p3;
 }
 
 Triangle::~Triangle()
@@ -39,21 +41,21 @@ float Triangle::intersect(Ray * ray)
 	Vect* epsilon = new Vect(ray->getD());
 	epsilon->multiply(t);
 	point->add(epsilon);
-	Vect* a = point->minus(_point1)->r2D2(_i);
-	Vect* b = _point2->minus(_point1)->r2D2(_i);
-	Vect* c = _point3->minus(_point1)->r2D2(_i);
+	Vect * a = point->minus(_point1)->r2D2(_i);
+	Vect * p2 = new Vect(_point2);
+	Vect * b = p2->minus(_point1)->r2D2(_i);
+	Vect * p3 = new Vect(_point3);
+	Vect * c = p3->minus(_point1)->r2D2(_i);
 
 	float deno = b->det2D(c);
 	float alfa = a->det2D(c) / deno;
 	float beta = b->det2D(a) / deno;
 
-	delete a;
-	delete b;
-	delete c;
+	delete p2;
+	delete p3;
 	delete point;
 
 	if (alfa >= 0 && beta >= 0 && alfa + beta <= 1)
-		
 		return t;
 	return 0.0f;
 }

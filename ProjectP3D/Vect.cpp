@@ -36,7 +36,10 @@ Vect * Vect::normalize() {
 }
 
 Vect * Vect::minus(Vect * vect) {
-	return new Vect(_x - vect->getX(), _y - vect->getY(), _z - vect->getZ());
+	_x = _x - vect->getX();
+	_y = _y - vect->getY();
+	_z = _z - vect->getZ();
+	return this;
 }
 
 Vect * Vect::crossP(Vect * vect) {

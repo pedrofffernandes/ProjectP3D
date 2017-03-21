@@ -24,13 +24,13 @@ Camera::Camera(Vect* vrp, Vect* vpn, Vect* vuv, int resX, int resY, float fov, f
 	_resY = resY;
 	_hither = hither;
 	
-	_d = (vrp->minus(vpn))->length();
+	Vect * vrpa = new Vect(vrp);
+	_d = (vrpa->minus(vpn))->length();
 	_h = 2 * _d * tan(fov / 2);
 	_w = (resX / resY) * _h;
 
-
-	_ze = (vrp->minus(vpn))->normalize();
-	
+	Vect * vrpb = new Vect(vrp);
+	_ze = (vrpb->minus(vpn))->normalize();
 	_xe = (vuv->crossP(_ze))->normalize();
 	_ye = _ze->crossP(_xe);
 	
