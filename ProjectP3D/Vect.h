@@ -31,8 +31,8 @@ public:
 	Vect * multiply(float f);
 	//Adds two vectors
 	Vect * add(Vect * vect);
-	//Multiplies the elements of the vectors
-	Vect * lineP(Vect * vect);
+	// Color multiplication
+	Vect * colorMultiplication(Vect * vect);
 	//absf to all vector elements
 	Vect * positive();
 

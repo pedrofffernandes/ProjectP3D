@@ -203,5 +203,6 @@ int main(int argc, char**argv)
 	glutDisplayFunc(drawScene);
 	glDisable(GL_DEPTH_TEST);
 	glutMainLoop();
+	
 	return 0;
 }
