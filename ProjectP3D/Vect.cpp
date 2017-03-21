@@ -56,11 +56,10 @@ float Vect::length() {
 }
 
 Vect * Vect::multiply(float f) {
-	float x, y, z;
-	x = _x * f;
-	y = _y * f;
-	z = _z * f;
-	return new Vect(x, y, z);
+	_x = _x * f;
+	_y = _y * f;
+	_z = _z * f;
+	return this;
 }
 
 Vect * Vect::add(Vect * vect) {

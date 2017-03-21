@@ -13,7 +13,8 @@ Triangle::Triangle(Vect * point1, Vect * point2, Vect * point3, Material * mat) 
 	//Set normal
 	_n = p12->crossP(p13);
 	_n = _n->normalize();
-	_d = _n->dotP(_point1->multiply(-1));
+	Vect * p1 = new Vect(point1);
+	_d = _n->dotP(p1->multiply(-1));	
 
 	_i = _n->max();
 	delete p12;
@@ -35,7 +36,9 @@ float Triangle::intersect(Ray * ray)
 	}
 
 	Vect* point = new Vect(ray->getO());
-	point->add(ray->getD()->multiply(t));
+	Vect* epsilon = new Vect(ray->getD());
+	epsilon->multiply(t);
+	point->add(epsilon);
 	Vect* a = point->minus(_point1)->r2D2(_i);
 	Vect* b = _point2->minus(_point1)->r2D2(_i);
 	Vect* c = _point3->minus(_point1)->r2D2(_i);

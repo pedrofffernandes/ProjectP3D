@@ -29,9 +29,10 @@ Vect * Light::getDiffuse(Vect * normal, Vect* L, Material * mat){
 
 	float kd = mat->getKd();
 	float nl = normal->dotP(L);
-	//std::cout << nl << '\n';
 	
-	Vect* result = mat->getRGB()->multiply(kd)->multiply(nl);
+	Vect* result = new Vect(mat->getRGB());
+	result->multiply(kd);
+	result->multiply(nl);
 	result->lineP(_rgb);
 	return result;
 }
@@ -41,13 +42,17 @@ Vect * Light::getSpecular(Vect * normal, Vect * L, Material * mat, Vect* v)
 	float ks = mat->getKs();
 	float shine = mat->getShine();
 
-	Vect * I = L->multiply(-1);
-	Vect * V = normal->multiply(-2 * I->dotP(normal));
+	Vect * I = new Vect(L);
+	I->multiply(-1);
+	Vect * V = new Vect(normal);
+	V->multiply(-2 * I->dotP(normal));
 	I->add(V);
 
 	float rv = pow((I->dotP(v) < EPSILON) ? EPSILON : I->dotP(v), shine);
 
-	Vect* result = mat->getRGB()->multiply(ks)->multiply(rv);
+	Vect* result = new Vect(mat->getRGB());
+	result->multiply(ks);
+	result->multiply(rv);
 	result->lineP(_rgb);
 
 	delete I;

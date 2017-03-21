@@ -69,23 +69,25 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 
 	//Local ilumination
 	for (itL = lights.begin(); itL != lights.end(); itL++) {			//Iterates over all the lights
-		Vect * L = ((Light*)*itL)->getLVect(hit);
+		Vect * lightD = ((Light*)*itL)->getLVect(hit);
 		
-		if(L->dotP(normal) > 0) {										//If surface faces light
+		if(lightD->dotP(normal) > 0) {										//If surface faces light
 			Vect * newO = new Vect(hit);
-			Ray * newRay = new Ray(newO->add(L->multiply(EPSILON)), L);	//Create shadowfeeler
-			if (!inShadow(newRay)) {
-				Vect* difuse = ((Light*)*itL)->getDiffuse(normal, L, closest->getMat());								//Compute Diffuse		
-				Vect* specular = ((Light*)*itL)->getSpecular(normal, L, closest->getMat(), ray->getD()->multiply(-1));	//Compute Specular
+			Vect * newD = new Vect(lightD);
+			Ray * shadowFeeler = new Ray(newO->add(newD->multiply(EPSILON)), lightD);	//Create shadowfeeler
+			if (!inShadow(shadowFeeler)) {
+				Vect * difuse = ((Light*)*itL)->getDiffuse(normal, lightD, closest->getMat());								//Compute Diffuse
+				Vect * rayD = new Vect(ray->getD());
+				Vect * specular = ((Light*)*itL)->getSpecular(normal, lightD, closest->getMat(), rayD->multiply(-1));	//Compute Specular
 
 				color->add(difuse);					
 				color->add(specular);
 				delete difuse;
 				delete specular;
 			}
-			delete newRay;
+			delete shadowFeeler;
 		}
-		delete L;
+		delete lightD;
 	}
 
 	if (depth >= MAX_DEPTH) {
@@ -97,13 +99,16 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 	//Reflection
 	if (closest->getMat()->getKs() > 0) {					//If material is reflective
 		Vect * I = new Vect(ray->getD());					//Compute reflection direction
-		Vect * V = normal->multiply(-2 * I->dotP(normal));	//
-		I->add(V);								//
+		Vect * V = new Vect(normal);						//
+		V->multiply(-2 * I->dotP(normal));					//
+		I->add(V);											//
 
 		Vect * newO = new Vect(hit);
-		Ray * reflectRay = new Ray(newO->add(I->multiply(EPSILON)), I);			//Create reflection ray
-		Vect * reflectColor = rayTracing(reflectRay, depth + 1, ior);			//Compute reflection color
-		color->add(reflectColor->multiply(closest->getMat()->getKs())); //Add color to pixel color
+		Vect * newD = new Vect(I);
+		Ray * reflectRay = new Ray(newO->add(newD->multiply(EPSILON)), I);	//Create reflection ray
+		Vect * reflectColor = rayTracing(reflectRay, depth + 1, ior);		//Compute reflection color
+		reflectColor->multiply(closest->getMat()->getKs());					//Multiply by intensity
+		color->add(reflectColor);											//Add color to pixel color
 		delete V;
 		delete I;
 		delete reflectRay;
@@ -117,26 +122,29 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 		float aux;
 		float iorM = ior;									//IOR medium
 		float iorO = closest->getMat()->getIOR();			//IOR object
-		Vect * n = normal;
+		Vect * n = new Vect(normal);
 		if (cosi < 0) {										//If outside
 			cosi = -cosi;									//Turn cos positive
 		} else {											//If inside
 			aux = iorM;										//Swap ior's
 			iorM = iorO;									//
 			iorO = aux;										//
-			n = n->multiply(-1);							//Get inside normal
+			n->multiply(-1);								//Get inside normal
 		}
 
 		float eta = iorM / iorO;
 		float k = 1 - eta*eta * (1 - cosi*cosi);
 		if (k >= 0) {										//k<0 Total internal refraction
-			Vect * I = ray->getD()->multiply(eta);			//Compute refraction ray equation
-			n = n->multiply(eta * cosi - sqrtf(k));			//Using Ray Tracing: Texto Apoio
+			Vect * I = new Vect(ray->getD());
+			I->multiply(eta);								//Compute refraction ray equation
+			n->multiply(eta * cosi - sqrtf(k));				//Using Ray Tracing: Texto Apoio
 			I->add(n);										//
 			Vect * newO = new Vect(hit);
-			Ray * refractRay = new Ray(newO->add(I->multiply(EPSILON)), I);			//Create refraction ray
-			Vect * refractColor = rayTracing(refractRay, depth + 1, ior);			//Compute refraction color
-			color->add(refractColor->multiply(closest->getMat()->getT()));	//Add refraction color to pixel
+			Vect * newD = new Vect(I);
+			Ray * refractRay = new Ray(newO->add(newD->multiply(EPSILON)), I);	//Create refraction ray
+			Vect * refractColor = rayTracing(refractRay, depth + 1, ior);		//Compute refraction color
+			refractColor->multiply(closest->getMat()->getT());					//Multiply by intensity
+			color->add(refractColor);											//Add refraction color to pixel
 			delete I;
 			delete refractRay;
 			delete refractColor;
@@ -167,7 +175,7 @@ bool inShadow(Ray* ray) {
 int main(int argc, char**argv)
 {
 	scene = new Scene();
-	if (!(scene->load_nff("test_scenes/mount_low.nff"))) return 0;
+	if (!(scene->load_nff("test_scenes/balls_low.nff"))) return 0;
 	
 	RES_X = scene->getCamera()->getResX();
 	RES_Y = scene->getCamera()->getResY();
