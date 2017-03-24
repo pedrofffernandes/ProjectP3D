@@ -15,38 +15,48 @@ Sphere::~Sphere()
 
 float Sphere::intersect(Ray * ray)
 {
-	float dx = ray->getD()->getX();
-	float dy = ray->getD()->getY();
-	float dz = ray->getD()->getZ();
-
-	float ox = ray->getO()->getX();
-	float oy = ray->getO()->getY();
-	float oz = ray->getO()->getZ();
-
-	float cx = _position->getX();
-	float cy = _position->getY();
-	float cz = _position->getZ();
-
-	//Compute the square distance sphere to ray origin
-	float d = (cx - ox)*(cx - ox) + (cy - oy)*(cy - oy) + (cz - oz)*(cz - oz);
-	//Compare distance squared to radius squared
+	// Initialization
+	/// This is just for the sake of legibility
+	/// Ray Direction and respective Coordinates
+	float ray_direction_x = ray->getD()->getX();
+	float ray_direction_y = ray->getD()->getY();
+	float ray_direction_z = ray->getD()->getZ();
+	/// Ray Origin Point and respective Coordinates
+	float ray_origin_x = ray->getO()->getX();
+	float ray_origin_y = ray->getO()->getY();
+	float ray_origin_z = ray->getO()->getZ();
+	/// Sphere Center and respective Coordinates
+	float sphere_center_x = _position->getX();
+	float sphere_center_y = _position->getY();
+	float sphere_center_z = _position->getZ();
+	
+	// 1) Normalize ray_direction
+	/// Already done
+	// 2) Compute the square distance from the ray origin to the sphere center
+	float d =
+		pow((sphere_center_x - ray_origin_x), 2) +
+		pow((sphere_center_y - ray_origin_y), 2) +
+		pow((sphere_center_z - ray_origin_z), 2);
+	// 3) Compare distance squared with the radius squared
 	if (d == _radiusSquare)
+		/// It means the ray origin is in the sphere surface
+		/// so we will consider that it doesn't intersect
 		return 0.0f;
-	//Compute B
-	float b = dx*(cx - ox) + dy*(cy - oy) + dz*(cz - oz);
-
-	if (d > _radiusSquare)
-		if (b < 0)
-			return 0.0f;
-	//Compute R
+	// 4) Compute B
+	float b = ray_direction_x*(sphere_center_x - ray_origin_x) + ray_direction_y*(sphere_center_y - ray_origin_y) + ray_direction_z*(sphere_center_z - ray_origin_z);
+	// 5) Check if the ray came from outside the sphere
+	// and its pointing in the opposite direction to the sphere center
+	if (d > _radiusSquare && b < 0)
+		return 0.0f;
+	// 6) Compute R
 	float R = b*b - d + _radiusSquare;
-	//If R < 0 then Sphere not intersected
+	/// If R < 0 then Sphere not intersected
 	if (R < 0)
 		return 0.0f;
-	//Choose the root that is in front
+	// 7) Choose the root that is in closest
 	if (d > _radiusSquare)
 		return b - sqrt(R);
-	if (d < _radiusSquare)
+	else 
 		return b + sqrt(R);
 }
 

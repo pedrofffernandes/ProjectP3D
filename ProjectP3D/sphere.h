@@ -1,4 +1,10 @@
 #pragma once
+#ifndef __SPHERE_H__
+#define __SPHERE_H__
+
+// C File Headers
+#include "math.h"
+// Project File Headers
 #include "Obj.h"
 
 class Sphere : public Obj
@@ -18,3 +24,4 @@ public:
 
 };
 
+#endif // !1

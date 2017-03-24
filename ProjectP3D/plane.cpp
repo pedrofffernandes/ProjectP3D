@@ -24,11 +24,13 @@ Plane::~Plane()
 
 float Plane::intersect(Ray * ray)
 {	
-	if (_n->dotP(ray->getD()) > -1e-4)
-		return 0.0f;
+	/// dot product between the plane normal (N) and the ray direction (Rd)
+	float dotproduct_NRd = _n->dotP(ray->getD());
+	/// Cannot divide by ZERO
+	if (dotproduct_NRd > -1e-4) return 0.0f;
 	Vect * rayO = new Vect(ray->getO());
 	rayO->minus(_point1);
-	float result = -((rayO)->dotP(_n)) / (_n->dotP(ray->getD())); 
+	float result = -((rayO)->dotP(_n)) / dotproduct_NRd;
 	delete rayO;
 	return result;
 }
