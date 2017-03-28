@@ -8,3 +8,7 @@ ProjectP3D/main.cpp~RF109659cb.TMP
 *.enc
 *.tiff
 /README.txt
+/ProjectP3D/Debug
+/Debug
+/.vs/ProjectP3D/v14
+/ProjectP3D/ProjectP3D.vcxproj.user
