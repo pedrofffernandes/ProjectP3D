@@ -1,8 +1,29 @@
 #include "Header.h"
+#include <vector>
+#include <random>
 
-#define MAX_DEPTH 6
+#define MAX_DEPTH 4
 #define EPSILON 1e-4
 #define IOR 1.0
+#define NUMEROAMOSTRAS 4
+#define ERAND (float)rand()/RAND_MAX
+
+#include <chrono>
+
+#define TIMING
+
+#ifdef TIMING
+#define INIT_TIMER auto start = std::chrono::high_resolution_clock::now();
+#define START_TIMER  start = std::chrono::high_resolution_clock::now();
+#define STOP_TIMER(name)  std::cout << "\n RUNTIME of " << name << ": " << \
+    std::chrono::duration_cast<std::chrono::milliseconds>( \
+            std::chrono::high_resolution_clock::now()-start \
+    ).count() << " ms " << std::endl; 
+#else
+#define INIT_TIMER
+#define START_TIMER
+#define STOP_TIMER(name)
+#endif
 
 Scene * scene = NULL;
 int RES_X, RES_Y;
@@ -26,12 +47,22 @@ void reshape(int w, int h)
 
 void drawScene()
 {	
+	INIT_TIMER
+	START_TIMER
 	for (int y = 0; y < RES_Y; y++)
 	{
 		for (int x = 0; x < RES_X; x++)
 		{	
-			Ray * ray = scene->getCamera()->PrimaryRay(x, y);
-			Vect * color = rayTracing(ray, 1, IOR); //depth=1, ior=1.0
+			Vect * color = new Vect();
+			Ray * ray;
+			for (int n = 0; n < NUMEROAMOSTRAS; n++) {
+				for (int m = 0; m < NUMEROAMOSTRAS; m++) {
+					ray = scene->getCamera()->PrimaryRay(x + ((n + ERAND) / NUMEROAMOSTRAS), y + ((m + ERAND) / NUMEROAMOSTRAS));
+					color->add(rayTracing(ray, 1, IOR)); //depth=1, ior=1.0
+				}
+			}
+
+			color->multiply((float)1 / (NUMEROAMOSTRAS*NUMEROAMOSTRAS));
 			glBegin(GL_POINTS);
 			glColor3f(color->getX(), color->getY(), color->getZ());
 			glVertex2f(x, y);
@@ -41,6 +72,7 @@ void drawScene()
 			delete color;
 		}
 	} 
+	STOP_TIMER("draw")
 	printf("Terminou!\n");
 }
 
@@ -185,7 +217,7 @@ bool inShadow(Ray* ray) {
 int main(int argc, char**argv)
 {
 	scene = new Scene();
-	if (!(scene->load_nff("test_scenes/mount_low.nff"))) return 0;
+	if (!(scene->load_nff("test_scenes/balls_low.nff"))) return 0;
 	
 	RES_X = scene->getCamera()->getResX();
 	RES_Y = scene->getCamera()->getResY();
