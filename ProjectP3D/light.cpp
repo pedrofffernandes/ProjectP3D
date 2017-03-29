@@ -1,4 +1,5 @@
 #include "Light.h"
+#include <iostream>
 
 #define EPSILON 1e-3
 
@@ -7,6 +8,8 @@ Light::Light(Vect* position, Vect* rgb)
 {
 	_position = position;
 	_rgb = rgb;
+	_a = new Vect(1, 0, 0);
+	_b = new Vect(0, 1, 0);
 }
 
 
@@ -26,6 +29,20 @@ Vect * Light::getLVect(Vect * hit) {
 	Vect * result = new Vect(_position);
 	result->minus(hit);
 	result->normalize();
+	return result;
+}
+
+Vect * Light::getLVectSoft(Vect * hit)
+{
+	Vect * result = new Vect(_position);
+	Vect * a = new Vect(_a);
+	Vect * b = new Vect(_b);
+	result->add(a->multiply(ERAND));
+	result->add(b->multiply(ERAND));
+	result->minus(hit);
+	result->normalize();
+	delete a;
+	delete b;
 	return result;
 }
 

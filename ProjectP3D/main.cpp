@@ -5,7 +5,7 @@
 #define MAX_DEPTH 4
 #define EPSILON 1e-4
 #define IOR 1.0
-#define NUMEROAMOSTRAS 4
+#define NUMEROAMOSTRAS 1
 #define ERAND (float)rand()/RAND_MAX
 
 #include <chrono>
@@ -51,26 +51,28 @@ void drawScene()
 	START_TIMER
 	for (int y = 0; y < RES_Y; y++)
 	{
-		
+		glBegin(GL_POINTS);
 		for (int x = 0; x < RES_X; x++)
 		{	
 			Vect * color = new Vect();
 			Ray * ray;
-
-					ray = scene->getCamera()->PrimaryRay(x +0.5f, y + 0.5f);
+			for (int n = 0; n < NUMEROAMOSTRAS; n++) {
+				for (int m = 0; m < NUMEROAMOSTRAS; m++) {
+					ray = scene->getCamera()->PrimaryRay(x + ((n + ERAND) / NUMEROAMOSTRAS), y + ((m + ERAND) / NUMEROAMOSTRAS));
 					color->add(rayTracing(ray, 1, IOR)); //depth=1, ior=1.0
-			
+				}
+			}
 
-			//color->multiply((float)1 / (NUMEROAMOSTRAS*NUMEROAMOSTRAS));
-					glBegin(GL_POINTS);
+			color->multiply((float)1 / (NUMEROAMOSTRAS*NUMEROAMOSTRAS));
+			
 			glColor3f(color->getX(), color->getY(), color->getZ());
 			glVertex2f(x, y);
-			glEnd();
-			glFlush();
+			
 			delete ray;
 			delete color;
 		}
-		
+		glEnd();
+		glFlush();
 	} 
 	STOP_TIMER("draw")
 	printf("Terminou!\n");
@@ -94,6 +96,7 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 	if (closest == nullptr)									//If the ray doesn't intersect any object
 		return new Vect(scene->getBackground());						
 
+
 	std::list<Light*> lights = scene->getLights();
 	std::list<Light*>::iterator itL;
 	Vect* hit = ray->getHitPoint(dist);
@@ -102,8 +105,10 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 
 	//Local ilumination
 	for (itL = lights.begin(); itL != lights.end(); itL++) {			//Iterates over all the lights
-		Vect * lightD = ((Light*)*itL)->getLVect(hit);
+		Vect * lightD = ((Light*)*itL)->getLVectSoft(hit);
 		
+		//std::cout << lightD->getX() << '\n';
+
 		if(lightD->dotP(normal) > 0) {										//If surface faces light
 			Vect * newO = new Vect(hit);
 			Vect * newD = new Vect(lightD);
