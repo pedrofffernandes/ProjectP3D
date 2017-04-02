@@ -21,19 +21,18 @@ void drawScene()
 	START_TIMER
 	for (int y = 0; y < RES_Y; y++)
 	{
+		
 		for (int x = 0; x < RES_X; x++)
 		{	
 			Vect * color = new Vect();
 			Ray * ray;
-			for (int n = 0; n < NUMEROAMOSTRAS; n++) {
-				for (int m = 0; m < NUMEROAMOSTRAS; m++) {
-					ray = scene->getCamera()->PrimaryRay(x + ((n + ERAND) / NUMEROAMOSTRAS), y + ((m + ERAND) / NUMEROAMOSTRAS));
-					color->add(rayTracing(ray, 1, IOR)); //depth=1, ior=1.0
-				}
-			}
 
-			color->multiply((float)1 / (NUMEROAMOSTRAS*NUMEROAMOSTRAS));
-			glBegin(GL_POINTS);
+					ray = scene->getCamera()->PrimaryRay(x +0.5f, y + 0.5f);
+					color->add(rayTracing(ray, 1, IOR)); //depth=1, ior=1.0
+			
+
+			//color->multiply((float)1 / (NUMEROAMOSTRAS*NUMEROAMOSTRAS));
+					glBegin(GL_POINTS);
 			glColor3f(color->getX(), color->getY(), color->getZ());
 			glVertex2f(x, y);
 			glEnd();
@@ -41,6 +40,7 @@ void drawScene()
 			delete ray;
 			delete color;
 		}
+		
 	} 
 	STOP_TIMER("draw")
 	printf("Terminou!\n");
