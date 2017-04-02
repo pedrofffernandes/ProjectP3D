@@ -6693,3 +6693,7 @@ Middleware/qt/lib/fonts/fixed_70_50.qpf
 Middleware/qt/lib/fonts/helvetica_100_50.qpf
 ProjectP3D/Debug/sphere.obj
 ProjectP3D/Debug/vc140.pdb
+/.vs/ProjectP3D/v14/.suo
+/ProjectP3D/Debug
+/ProjectP3D/ProjectP3D.vcxproj.user
+/README.txt
