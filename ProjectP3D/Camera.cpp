@@ -48,7 +48,7 @@ int Camera::getResY() {
 	return _resY;
 }
 
-Ray * Camera::PrimaryRay(int x, int y) {
+Ray * Camera::PrimaryRay(float x, float y) {
 	Vect * vz = new Vect(_ze);
 	vz->multiply(-_d);
 	Vect * vy = new Vect(_ye);
@@ -64,6 +64,24 @@ Ray * Camera::PrimaryRay(int x, int y) {
 	delete vy;
 	delete vx;
 	return result;
+}
+
+Vect * Camera::GetFocalPoint(float x, float y)
+{
+	float px = x * 2;
+	float py = y * 2;
+	Vect* u = new Vect(_xe);
+	Vect* v = new Vect(_ye);
+	Vect* w = new Vect(_ze);
+
+	u->multiply(px);
+	v->multiply(py);
+	w->multiply(-_d * 2);
+	u->add(v->add(w));
+	delete v;
+	delete w;
+
+	return u;
 }
 
 Vect * Camera::getZe()

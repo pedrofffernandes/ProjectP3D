@@ -63,7 +63,8 @@ public:
 	int Camera::getResX();
 	int Camera::getResY();
 	//Computes the primaryRay
-	Ray * Camera::PrimaryRay(int x, int y);
+	Ray * Camera::PrimaryRay(float x, float y);
+	Vect* Camera::GetFocalPoint(float x, float y);
 	Vect * getZe();
 
 };

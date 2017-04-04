@@ -29,6 +29,7 @@ void drawScene()
 			for (int n = 0; n < NUMEROAMOSTRAS; n++) {
 				for (int m = 0; m < NUMEROAMOSTRAS; m++) {
 					ray = scene->getCamera()->PrimaryRay(x + ((n + ERAND) / NUMEROAMOSTRAS), y + ((m + ERAND) / NUMEROAMOSTRAS));
+					// deapth of field
 					color->add(rayTracing(ray, 1, IOR)); //depth=1, ior=1.0
 				}
 			}
@@ -75,7 +76,7 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 
 	//Local ilumination
 	for (itL = lights.begin(); itL != lights.end(); itL++) {			//Iterates over all the lights
-		Vect * lightD = ((Light*)*itL)->getLVectSoft(hit);
+		Vect * lightD = ((Light*)*itL)->getLVect(hit);
 		
 		//std::cout << lightD->getX() << '\n';
 
@@ -182,18 +183,25 @@ int main(int argc, char**argv)
 	RES_Y = scene->getCamera()->getResY();
 	printf("resx = %d resy= %d.\n", RES_X, RES_Y);
 
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA);
 
-	glutInitWindowSize(RES_X, RES_Y);
-	glutInitWindowPosition(100, 100);
-	glutCreateWindow("JAP Ray Tracing");
-	glClearColor(0, 0, 0, 1);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glutReshapeFunc(reshape);
-	glutDisplayFunc(drawScene);
-	glDisable(GL_DEPTH_TEST);
-	glutMainLoop();
+	if (USE_OPEN_GL) {
+		glutInit(&argc, argv);
+		glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA);
+
+		glutInitWindowSize(RES_X, RES_Y);
+		glutInitWindowPosition(100, 100);
+		glutCreateWindow("JAP Ray Tracing");
+		glClearColor(0, 0, 0, 1);
+		glClear(GL_COLOR_BUFFER_BIT);
+		glutReshapeFunc(reshape);
+		glutDisplayFunc(drawScene);
+		glDisable(GL_DEPTH_TEST);
+		glutMainLoop();
+	}
+	else {
+		drawScene_withoutOPENGL(scene);
+	}
+	
 	
 	return 0;
 }
