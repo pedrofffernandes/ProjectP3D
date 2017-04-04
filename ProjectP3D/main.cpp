@@ -29,8 +29,8 @@ void drawScene()
 			for (int n = 0; n < NUMEROAMOSTRAS; n++) {
 				for (int m = 0; m < NUMEROAMOSTRAS; m++) {
 					ray = scene->getCamera()->PrimaryRay(x + ((n + ERAND) / NUMEROAMOSTRAS), y + ((m + ERAND) / NUMEROAMOSTRAS));
-					// deapth of field
 					color->add(rayTracing(ray, 1, IOR)); //depth=1, ior=1.0
+
 				}
 			}
 
