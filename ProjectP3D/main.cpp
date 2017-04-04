@@ -1,34 +1,4 @@
 #include "Header.h"
-#include <vector>
-#include <random>
-
-#define MAX_DEPTH 4
-#define EPSILON 1e-4
-#define IOR 1.0
-#define NUMEROAMOSTRAS 1
-#define ERAND (float)rand()/RAND_MAX
-
-#include <chrono>
-
-#define TIMING
-
-#ifdef TIMING
-#define INIT_TIMER auto start = std::chrono::high_resolution_clock::now();
-#define START_TIMER  start = std::chrono::high_resolution_clock::now();
-#define STOP_TIMER(name)  std::cout << "\n RUNTIME of " << name << ": " << \
-    std::chrono::duration_cast<std::chrono::milliseconds>( \
-            std::chrono::high_resolution_clock::now()-start \
-    ).count() << " ms " << std::endl; 
-#else
-#define INIT_TIMER
-#define START_TIMER
-#define STOP_TIMER(name)
-#endif
-
-Scene * scene = NULL;
-int RES_X, RES_Y;
-Vect * rayTracing(Ray * ray, int depth, float ior);
-bool inShadow(Ray* ray);
 
 
 void reshape(int w, int h)
@@ -200,22 +170,6 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 	delete normal;
 	delete hit;
 	return color;
-}
-
-//Checks if a ray intersects any object
-//Used to check if objects are in shadow
-bool inShadow(Ray* ray) {
-	std::list<Obj*> objs = scene->getObjects();
-	std::list<Obj*>::iterator itO;
-	float hit = 0;
-
-	for (itO = objs.begin(); itO != objs.end(); itO++) {
-		hit = ((Obj*)*itO)->intersect(ray);				//Intersect
-		if (hit > 0) {
-			return true;
-		}
-	}
-	return false;
 }
 
 
