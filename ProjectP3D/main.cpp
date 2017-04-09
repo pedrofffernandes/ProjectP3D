@@ -25,21 +25,11 @@ void drawScene()
 		for (int x = 0; x < RES_X; x++)
 		{	
 			Vect * color = new Vect();
-			Ray * ray;
-			for (int n = 0; n < NUMEROAMOSTRAS; n++) {
-				for (int m = 0; m < NUMEROAMOSTRAS; m++) {
-					ray = scene->getCamera()->PrimaryRay(x + ((n + ERAND) / NUMEROAMOSTRAS), y + ((m + ERAND) / NUMEROAMOSTRAS));
-					color->add(rayTracing(ray, 1, IOR)); //depth=1, ior=1.0
+			//(USE_DOF) ? multiSampleDOF(color, x, y) : multiSample(color, x, y);
 
-				}
-			}
-
-			color->multiply((float)1 / (NUMEROAMOSTRAS*NUMEROAMOSTRAS));
-			
 			glColor3f(color->getX(), color->getY(), color->getZ());
 			glVertex2f(x, y);
 			
-			delete ray;
 			delete color;
 		}
 		glEnd();
@@ -47,6 +37,41 @@ void drawScene()
 	} 
 	STOP_TIMER("draw")
 	printf("Terminou!\n");
+}
+
+void multiSample(Vect * color, int x, int y) {
+
+	for (int n = 0; n < NUMEROAMOSTRAS; n++) {
+		for (int m = 0; m < NUMEROAMOSTRAS; m++) {
+			Ray * ray = scene->getCamera()->PrimaryRay(x + ((n + ERAND) / NUMEROAMOSTRAS), y + ((m + ERAND) / NUMEROAMOSTRAS));
+			Vect * sample = rayTracing(ray, 1, IOR);
+			color->add(sample); //depth=1, ior=1.0
+			delete ray;
+			delete sample;
+		}
+	}
+	color->multiply((float)1 / (NUMEROAMOSTRAS*NUMEROAMOSTRAS));
+}
+
+void multiSampleDOF(Vect * color, int x, int y) {
+
+	for (int n = 0; n < NUMEROAMOSTRAS; n++) {
+		for (int m = 0; m < NUMEROAMOSTRAS; m++) {
+			Vect * focalp = scene->getCamera()->GetFocalPoint(x + ((n + ERAND) / NUMEROAMOSTRAS), y + ((m + ERAND) / NUMEROAMOSTRAS));
+			for (int o = 0; o < NUMEROAMOSTRAS; o++) {
+				for (int q = 0; q < NUMEROAMOSTRAS; q++) {
+					Ray * ray = scene->getCamera()->PrimaryRayDOF(focalp, APERTURE);
+					Vect * sample = rayTracing(ray, 1, IOR);
+					color->add(sample); //depth=1, ior=1.0
+					delete ray;
+					delete sample;
+				}
+			}
+			color->multiply((float)1 / (NUMEROAMOSTRAS*NUMEROAMOSTRAS));
+			delete focalp;
+		}
+	}
+	color->multiply((float)1 / (NUMEROAMOSTRAS*NUMEROAMOSTRAS));
 }
 
 
