@@ -52,9 +52,9 @@ Ray * Camera::PrimaryRay(float x, float y) {
 	Vect * vz = new Vect(_ze);
 	vz->multiply(-_d);
 	Vect * vy = new Vect(_ye);
-	vy->multiply(_h * (((y + 0.5f) / _resY) - 0.5f));
+	vy->multiply(_h * ((y / _resY) - 0.5f));
 	Vect * vx = new Vect(_xe);
-	vx->multiply(_w * (((x + 0.5f) / _resX) - 0.5f));
+	vx->multiply(_w * ((x / _resX) - 0.5f));
 	
 	Vect * d = (vz->add(vy))->add(vx);
 	
