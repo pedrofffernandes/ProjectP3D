@@ -66,6 +66,26 @@ Ray * Camera::PrimaryRay(float x, float y) {
 	return result;
 }
 
+Ray * Camera::PrimaryRayDOF(Vect * focalp, float aperture) {
+	Vect * origin = originDOF(aperture);
+	Vect * direction = new Vect(focalp);
+	direction->minus(origin);
+
+	return new Ray(origin, direction);
+}
+
+Vect * Camera::originDOF(float aperture) {
+	float x = aperture * RAND * cosf(2 * PIRAND);
+	float y = aperture * RAND * sinf(2 * PIRAND);
+	Vect * u = new Vect(_xe);
+	Vect * v = new Vect(_ye);
+	u->multiply(x);
+	v->multiply(y);
+	u->add(v);
+	delete v;
+	return u;
+}
+
 Vect * Camera::GetFocalPoint(float x, float y)
 {
 	float px = x * 2;
