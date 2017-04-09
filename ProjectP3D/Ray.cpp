@@ -9,7 +9,8 @@ Ray::Ray(Vect* origin, Vect* direction) {
 }
 
 Ray::~Ray() {
-
+	delete _origin;
+	delete _direction;
 }
 
 Vect * Ray::getD()
