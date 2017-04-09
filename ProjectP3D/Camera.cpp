@@ -75,8 +75,10 @@ Ray * Camera::PrimaryRayDOF(Vect * focalp, float aperture) {
 }
 
 Vect * Camera::originDOF(float aperture) {
-	float x = aperture * RAND * cosf(2 * PIRAND);
-	float y = aperture * RAND * sinf(2 * PIRAND);
+	float r = sqrtf(RAND);					//sqrt spreads the points more evenly on the circle
+	float teta = 2 * PIRAND;
+	float x = aperture * r * cosf(teta);	
+	float y = aperture * r * sinf(teta);
 	Vect * u = new Vect(_xe);
 	Vect * v = new Vect(_ye);
 	u->multiply(x);
