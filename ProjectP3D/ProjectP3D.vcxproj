@@ -114,12 +114,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\João\Documents\Cadeiras\p3D_programacao 3D\myWork\glut\include;C:\Users\PC-ASUS\Documents\VS2015\Projects\Middleware\glut\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Documentos\Git\P3D\Middleware\glut\include;C:\Users\João\Documents\Cadeiras\p3D_programacao 3D\myWork\glut\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\João\Documents\Cadeiras\p3D_programacao 3D\myWork\glut\lib;C:\Users\PC-ASUS\Documents\VS2015\Projects\Middleware\glut\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\João\Documents\Cadeiras\p3D_programacao 3D\myWork\glut\lib;D:\Documentos\Git\P3D\Middleware\glut\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
