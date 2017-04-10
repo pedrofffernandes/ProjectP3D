@@ -68,15 +68,15 @@ Ray * Camera::PrimaryRay(float x, float y) {
 
 Vect * Camera::GetFocalPoint(float x, float y)
 {
-	float px = x * 2;
-	float py = y * 2;
+	float px = x;
+	float py = y;
 	Vect* u = new Vect(_xe);
 	Vect* v = new Vect(_ye);
 	Vect* w = new Vect(_ze);
 
 	u->multiply(px);
 	v->multiply(py);
-	w->multiply(-_d * 2);
+	w->multiply(-_d);
 	u->add(v->add(w));
 	delete v;
 	delete w;
@@ -87,4 +87,17 @@ Vect * Camera::GetFocalPoint(float x, float y)
 Vect * Camera::getZe()
 {
 	return _ze;
+}
+
+Ray * Camera::getPrimaryRayDOF(Vect *p)
+{
+	Vect* u = new Vect(_xe);
+	Vect* v = new Vect(_ye);
+	u->multiply(ERAND*0.00001);
+	v->multiply(ERAND*0.00001);
+	u->add(v);
+	Vect * direction = new Vect(u);
+	direction->minus(p);
+	delete v;
+	return new Ray(u,direction);
 }

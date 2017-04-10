@@ -28,8 +28,14 @@ void drawScene()
 			Ray * ray;
 			for (int n = 0; n < NUMEROAMOSTRAS; n++) {
 				for (int m = 0; m < NUMEROAMOSTRAS; m++) {
-					ray = scene->getCamera()->PrimaryRay(x + ((n + ERAND) / NUMEROAMOSTRAS), y + ((m + ERAND) / NUMEROAMOSTRAS));
+	//				ray = scene->getCamera()->PrimaryRay(x + ((n + ERAND) / NUMEROAMOSTRAS), y + ((m + ERAND) / NUMEROAMOSTRAS));
+					Vect * p = scene->getCamera()->GetFocalPoint(x, y);
+					ray = scene->getCamera()->getPrimaryRayDOF(p);
 					// deapth of field
+					/// raio = rand [0,1]
+					/// alpha = rand [0,1]
+					/// x = raio * sen(alpha)
+					/// y = raio * cos(alpha)
 					color->add(rayTracing(ray, 1, IOR)); //depth=1, ior=1.0
 				}
 			}

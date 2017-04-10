@@ -6,6 +6,7 @@
 #include "Vect.h"
 #include "Ray.h"
 
+#define ERAND (float)rand()/RAND_MAX
 
 class Camera
 {
@@ -66,6 +67,7 @@ public:
 	Ray * Camera::PrimaryRay(float x, float y);
 	Vect* Camera::GetFocalPoint(float x, float y);
 	Vect * getZe();
+	Ray* Camera::getPrimaryRayDOF(Vect*);
 
 };
 

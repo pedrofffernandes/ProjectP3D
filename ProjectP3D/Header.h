@@ -9,12 +9,12 @@
 // Project Classes
 #include "scene.h"
 // CONSTANTS
-#define MAX_DEPTH 4
+#define MAX_DEPTH 2
 #define EPSILON 1e-4
 #define IOR 1.0
 #define NUMEROAMOSTRAS 4
 #define ERAND (float)rand()/RAND_MAX
-#define USE_OPEN_GL false /// SET THIS TO FALSE IF YOU WANT TO USE THE SAVE_BMP function
+#define USE_OPEN_GL true /// SET THIS TO FALSE IF YOU WANT TO USE THE SAVE_BMP function
 // VARIABLES
 Scene * scene = NULL;
 int RES_X, RES_Y;
