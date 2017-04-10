@@ -12,13 +12,20 @@
 #define MAX_DEPTH 2
 #define EPSILON 1e-4
 #define IOR 1.0
-#define NUMEROAMOSTRAS 4
+#define NUMEROAMOSTRAS 2
+#define USE_SOFTSHADOWS false
+#define APERTURE (float) 0.00000001
+#define USE_DOF true
+
 #define ERAND (float)rand()/RAND_MAX
 #define USE_OPEN_GL true /// SET THIS TO FALSE IF YOU WANT TO USE THE SAVE_BMP function
+
 // VARIABLES
 Scene * scene = NULL;
 int RES_X, RES_Y;
 Vect * rayTracing(Ray * ray, int depth, float ior);
+void multiSample(Vect * color, int x, int y);
+void multiSampleDOF(Vect * color, int x, int y);
 bool inShadow(Ray* ray);
 void drawScene_withoutOPENGL(Scene);
 // Declarations

@@ -3,12 +3,14 @@
 
 
 Ray::Ray(Vect* origin, Vect* direction) {
-	_origin = origin;
+	_origin = new Vect(origin);
 	_direction = new Vect(direction);
 	_direction->normalize();
 }
 
 Ray::~Ray() {
+	delete _origin;
+	delete _direction;
 }
 
 Vect * Ray::getD()

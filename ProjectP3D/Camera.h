@@ -8,6 +8,11 @@
 
 #define ERAND (float)rand()/RAND_MAX
 
+#define  M_PI (float) 3.1415926535
+#define RAND (float)rand()/RAND_MAX
+#define PIRAND (float)(rand()/RAND_MAX)*M_PI
+
+
 class Camera
 {
 	// Camera Parameters
@@ -65,6 +70,8 @@ public:
 	int Camera::getResY();
 	//Computes the primaryRay
 	Ray * Camera::PrimaryRay(float x, float y);
+	Ray * Camera::PrimaryRayDOF(Vect * focalp, float aperture);
+	Vect * Camera::originDOF(float aperture);
 	Vect* Camera::GetFocalPoint(float x, float y);
 	Vect * getZe();
 	Ray* Camera::getPrimaryRayDOF(Vect*);

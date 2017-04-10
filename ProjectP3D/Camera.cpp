@@ -52,9 +52,9 @@ Ray * Camera::PrimaryRay(float x, float y) {
 	Vect * vz = new Vect(_ze);
 	vz->multiply(-_d);
 	Vect * vy = new Vect(_ye);
-	vy->multiply(_h * (((y + 0.5f) / _resY) - 0.5f));
+	vy->multiply(_h * ((y / _resY) - 0.5f));
 	Vect * vx = new Vect(_xe);
-	vx->multiply(_w * (((x + 0.5f) / _resX) - 0.5f));
+	vx->multiply(_w * ((x / _resX) - 0.5f));
 	
 	Vect * d = (vz->add(vy))->add(vx);
 	
@@ -64,6 +64,28 @@ Ray * Camera::PrimaryRay(float x, float y) {
 	delete vy;
 	delete vx;
 	return result;
+}
+
+Ray * Camera::PrimaryRayDOF(Vect * focalp, float aperture) {
+	Vect * origin = originDOF(aperture);
+	Vect * direction = new Vect(focalp);
+	direction->minus(origin);
+
+	return new Ray(origin, direction);
+}
+
+Vect * Camera::originDOF(float aperture) {
+	float r = sqrtf(RAND);					//sqrt spreads the points more evenly on the circle
+	float teta = 2 * PIRAND;
+	float x = aperture * r * cosf(teta);	
+	float y = aperture * r * sinf(teta);
+	Vect * u = new Vect(_xe);
+	Vect * v = new Vect(_ye);
+	u->multiply(x);
+	v->multiply(y);
+	u->add(v);
+	delete v;
+	return u;
 }
 
 Vect * Camera::GetFocalPoint(float x, float y)
