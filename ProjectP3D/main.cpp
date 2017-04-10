@@ -25,7 +25,7 @@ void drawScene()
 		for (int x = 0; x < RES_X; x++)
 		{	
 			Vect * color = new Vect();
-			//(USE_DOF) ? multiSampleDOF(color, x, y) : multiSample(color, x, y);
+			(USE_DOF) ? multiSampleDOF(color, x, y) : multiSample(color, x, y);
 
 			glColor3f(color->getX(), color->getY(), color->getZ());
 			glVertex2f(x, y);

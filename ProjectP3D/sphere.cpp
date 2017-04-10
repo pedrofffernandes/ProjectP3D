@@ -6,6 +6,21 @@ Sphere::Sphere(Vect* position, float r, Material * mat) : Obj(mat)
 	_position = position;
 	_radius = r;
 	_radiusSquare = r * r;
+	// Computing Bounding Box
+	/// Check the minimum coordinates for the BBox
+	float x_min = position->getX() - _radius;
+	float y_min = position->getY() - _radius;
+	float z_min = position->getZ() - _radius;
+	Vect * min_point = new Vect(x_min - EPSILON, y_min - EPSILON, z_min - EPSILON);
+	/// Check the minimum coordinates for the BBox
+	float x_max = position->getX() + _radius;
+	float y_max = position->getY() + _radius;
+	float z_max = position->getZ() + _radius;
+	Vect * max_point = new Vect(x_max + EPSILON, y_max + EPSILON, z_max + EPSILON);
+	this->setBBox(new BBox(min_point, max_point));
+
+	delete min_point;
+	delete max_point;
 }
 
 

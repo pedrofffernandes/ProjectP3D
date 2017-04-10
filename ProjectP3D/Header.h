@@ -15,8 +15,7 @@
 #define NUMEROAMOSTRAS 2
 #define USE_SOFTSHADOWS false
 #define APERTURE (float) 0.00000001
-#define USE_DOF true
-
+#define USE_DOF false
 #define ERAND (float)rand()/RAND_MAX
 #define USE_OPEN_GL true /// SET THIS TO FALSE IF YOU WANT TO USE THE SAVE_BMP function
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "obj.h"
+
 class Triangle :
 	public Obj
 {
@@ -10,6 +11,8 @@ class Triangle :
 	float _d;
 	//Index of normal's biggest component
 	int _i;
+
+
 
 public:
 	Triangle(Vect* point1, Vect* point2, Vect* point3, Material* mat);
