@@ -12,7 +12,24 @@ Plane::Plane(Vect* point1, Vect* point2, Vect* point3, Material * mat) : Obj(mat
 	Vect * p13 = p3->minus(_point1);
 	//Set normal
 	_n = p12->crossP(p13);
-	_n->normalize();	
+	_n->normalize();
+	// Computing Bounding Box
+	// NOTE: The plane doesnt really have a bounding box since its infinite
+	// This is just to give some values that wont interfere
+	/// Check the minimum coordinates for the BBox
+	float x_min = HUGE_VALUE;
+	float y_min = HUGE_VALUE;
+	float z_min = HUGE_VALUE;
+	Vect * min_point = new Vect(x_min - EPSILON, y_min - EPSILON, z_min - EPSILON);
+	/// Check the maximum coordinates for the BBox
+	float x_max = -HUGE_VALUE;
+	float y_max = -HUGE_VALUE;
+	float z_max = -HUGE_VALUE;
+	Vect * max_point = new Vect(x_max + EPSILON, y_max + EPSILON, z_max + EPSILON);
+	this->setBBox(new BBox(min_point, max_point));
+
+	delete min_point;
+	delete max_point;
 	delete p2;
 	delete p3;
 }

@@ -14,6 +14,8 @@ class Triangle :
 	//Index of normal's biggest component
 	int _i;
 
+
+
 public:
 	Triangle(Vect* point1, Vect* point2, Vect* point3, Material* mat);
 	~Triangle();

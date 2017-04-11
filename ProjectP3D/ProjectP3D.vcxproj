@@ -19,7 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BBox.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Grid.cpp" />
     <ClCompile Include="light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="material.cpp" />
@@ -32,8 +34,10 @@
     <ClCompile Include="Vect.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BBox.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Constants.h" />
+    <ClInclude Include="Grid.h" />
     <ClInclude Include="Header.h" />
     <ClInclude Include="light.h" />
     <ClInclude Include="material.h" />

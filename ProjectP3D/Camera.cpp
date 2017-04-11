@@ -105,6 +105,7 @@ Vect * Camera::GetFocalPoint(float x, float y) {
 	u->add(v);
 	u->add(w);
 	u->add(_vrp);
+
 	delete v;
 	delete w;
 
@@ -115,3 +116,4 @@ Vect * Camera::getZe()
 {
 	return _ze;
 }
+

@@ -16,9 +16,35 @@ Triangle::Triangle(Vect * point1, Vect * point2, Vect * point3, Material * mat) 
 	_n = p12->crossP(p13);
 	_n->normalize();
 	Vect * p1 = new Vect(point1);
-	_d = _n->dotP(p1->multiply(-1));	
-
+	_d = _n->dotP(p1->multiply(-1));
 	_i = _n->max();
+	// Computing Bounding Box
+	/// Check the minimum coordinates for the BBox
+	float x_min = _point1->getX();
+	if (x_min > _point2->getX()) x_min = _point2->getX();
+	if (x_min > _point3->getX()) x_min = _point3->getX();
+	float y_min = _point1->getY();
+	if (y_min > _point2->getY()) y_min = _point2->getY();
+	if (y_min > _point3->getY()) y_min = _point3->getY();
+	float z_min = _point1->getZ();
+	if (z_min > _point2->getZ()) z_min = _point2->getZ();
+	if (z_min > _point3->getZ()) z_min = _point3->getZ();
+	Vect * min_point = new Vect(x_min - EPSILON, y_min - EPSILON, z_min - EPSILON);
+	/// Check the maximum coordinates for the BBox
+	float x_max = _point1->getX();
+	if (x_max < _point2->getX()) x_max = _point2->getX();
+	if (x_max < _point3->getX()) x_max = _point3->getX();
+	float y_max = _point1->getY();
+	if (y_max < _point2->getY()) y_max = _point2->getY();
+	if (y_max < _point3->getY()) y_max = _point3->getY();
+	float z_max = _point1->getZ();
+	if (z_max < _point2->getZ()) z_max = _point2->getZ();
+	if (z_max < _point3->getZ()) z_max = _point3->getZ();
+	Vect * max_point = new Vect(x_max + EPSILON, y_max + EPSILON, z_max + EPSILON);
+	this->setBBox(new BBox(min_point, max_point));
+
+	delete min_point;
+	delete max_point;
 	delete p2;
 	delete p3;
 }
