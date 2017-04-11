@@ -60,46 +60,51 @@ Ray * Camera::PrimaryRay(float x, float y) {
 	
 	Ray * result = new Ray(_vrp, d);
 
-	delete vz;
+	delete vz;									//vz deletes d too
 	delete vy;
 	delete vx;
 	return result;
 }
 
-Ray * Camera::PrimaryRayDOF(Vect * focalp, float aperture) {
-	Vect * origin = originDOF(aperture);
+Ray * Camera::PrimaryRayDOF(Vect * focalp) {
+	Vect * origin = originDOF();
 	Vect * direction = new Vect(focalp);
 	direction->minus(origin);
 
 	return new Ray(origin, direction);
 }
 
-Vect * Camera::originDOF(float aperture) {
+Vect * Camera::originDOF() {
 	float r = sqrtf(RAND);					//sqrt spreads the points more evenly on the circle
 	float teta = 2 * PIRAND;
-	float x = aperture * r * cosf(teta);	
-	float y = aperture * r * sinf(teta);
+	float x = APERTURE * r * cosf(teta);
+	float y = APERTURE * r * sinf(teta);
 	Vect * u = new Vect(_xe);
 	Vect * v = new Vect(_ye);
+	Vect * w = new Vect(_ze);
 	u->multiply(x);
 	v->multiply(y);
 	u->add(v);
+	u->add(_vrp);
+
+	delete w;
 	delete v;
 	return u;
 }
 
-Vect * Camera::GetFocalPoint(float x, float y)
-{
-	float px = x * 2;
-	float py = y * 2;
-	Vect* u = new Vect(_xe);
-	Vect* v = new Vect(_ye);
-	Vect* w = new Vect(_ze);
+Vect * Camera::GetFocalPoint(float x, float y) {
 
-	u->multiply(px);
-	v->multiply(py);
-	w->multiply(-_d * 2);
-	u->add(v->add(w));
+	Vect * u = new Vect(_xe);
+	Vect * v = new Vect(_ye);
+	Vect * w = new Vect(_ze);
+
+	u->multiply(FDRATIO * _w * ((x / _resX) - 0.5f));
+	v->multiply(FDRATIO * _h * ((y / _resY) - 0.5f));
+	w->multiply(FDRATIO * -_d);
+
+	u->add(v);
+	u->add(w);
+	u->add(_vrp);
 	delete v;
 	delete w;
 

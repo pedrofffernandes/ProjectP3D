@@ -25,8 +25,8 @@ void drawScene()
 		for (int x = 0; x < RES_X; x++)
 		{	
 			Vect * color = new Vect();
-			//(USE_DOF) ? multiSampleDOF(color, x, y) : multiSample(color, x, y);
-
+			(USE_DOF) ? multiSampleDOF(color, x, y) : multiSample(color, x, y);
+			
 			glColor3f(color->getX(), color->getY(), color->getZ());
 			glVertex2f(x, y);
 			
@@ -60,14 +60,14 @@ void multiSampleDOF(Vect * color, int x, int y) {
 			Vect * focalp = scene->getCamera()->GetFocalPoint(x + ((n + ERAND) / NUMEROAMOSTRAS), y + ((m + ERAND) / NUMEROAMOSTRAS));
 			for (int o = 0; o < NUMEROAMOSTRAS; o++) {
 				for (int q = 0; q < NUMEROAMOSTRAS; q++) {
-					Ray * ray = scene->getCamera()->PrimaryRayDOF(focalp, APERTURE);
+					Ray * ray = scene->getCamera()->PrimaryRayDOF(focalp);
 					Vect * sample = rayTracing(ray, 1, IOR);
 					color->add(sample); //depth=1, ior=1.0
 					delete ray;
 					delete sample;
 				}
 			}
-			color->multiply((float)1 / (NUMEROAMOSTRAS*NUMEROAMOSTRAS));
+			color->multiply((float)1 / (NUMEROAMOSTRAS));
 			delete focalp;
 		}
 	}
