@@ -74,6 +74,10 @@ void multiSampleDOF(Vect * color, int x, int y) {
 	color->multiply((float)1 / (NUMEROAMOSTRAS*NUMEROAMOSTRAS));
 }
 
+void monteCarlo() {
+
+}
+
 
 Vect * rayTracing(Ray * ray, int depth, float ior) {
 	std::list<Obj*> objs = scene->getObjects();
