@@ -103,7 +103,6 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 	for (itL = lights.begin(); itL != lights.end(); itL++) {			//Iterates over all the lights
 		Vect * lightD = (USE_SOFTSHADOWS) ? ((Light*)*itL)->getLVectSoft(hit) : ((Light*)*itL)->getLVect(hit);
 		
-		//std::cout << lightD->getX() << '\n';
 
 		if(lightD->dotP(normal) > 0) {										//If surface faces light
 			Vect * newO = new Vect(hit);

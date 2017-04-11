@@ -5,6 +5,9 @@
 #include "math.h"
 #include <stdlib.h>
 
+#include "Constants.h"
+
+
 class Vect
 {
 	float _x, _y, _z;

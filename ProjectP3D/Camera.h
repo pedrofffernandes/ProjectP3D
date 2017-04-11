@@ -5,6 +5,7 @@
 
 #include "Vect.h"
 #include "Ray.h"
+#include "Constants.h"
 
 
 #define  M_PI (float) 3.1415926535
@@ -71,7 +72,7 @@ public:
 	Ray * Camera::PrimaryRay(float x, float y);
 	Ray * Camera::PrimaryRayDOF(Vect * focalp, float aperture);
 	Vect * Camera::originDOF(float aperture);
-	Vect* Camera::GetFocalPoint(float x, float y);
+	Vect* Camera::GetFocalPoint(float x, float y, float fdratio);
 	Vect * getZe();
 
 };

@@ -1,21 +1,19 @@
+#pragma once
 #include <iostream>
 #include <chrono>
 #include <vector>
 #include <random>
 #include <stdio.h>
 #include <stdlib.h>
+
 // OpenGL
 #include <GL/glut.h>
+
 // Project Classes
 #include "scene.h"
+
 // CONSTANTS
-#define MAX_DEPTH 4
-#define EPSILON 1e-4
-#define IOR 1.0
-#define NUMEROAMOSTRAS 2
-#define USE_SOFTSHADOWS false
-#define APERTURE (float) 0.00000001
-#define USE_DOF true
+#include "Constants.h"
 
 #define ERAND (float)rand()/RAND_MAX
 #define USE_OPEN_GL true /// SET THIS TO FALSE IF YOU WANT TO USE THE SAVE_BMP function

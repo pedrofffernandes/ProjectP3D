@@ -6,6 +6,7 @@
 #include <math.h>
 #include <list>
 
+
 #include "Camera.h"
 #include "Light.h"
 #include "Material.h"
@@ -14,6 +15,7 @@
 #include "Sphere.h"
 #include "Vect.h"
 #include "Triangle.h"
+#include "Constants.h"
 
 class Scene {
 	std::list<Light*> _lights;
@@ -44,7 +46,4 @@ public:
 	void Scene::parseTriangle(FILE * file);
 	//void Scene::parseBigPoly(FILE * file, int d);
 	void Scene::parsePlane(FILE * file);
-
-
-
 };

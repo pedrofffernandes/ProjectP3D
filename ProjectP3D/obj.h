@@ -1,6 +1,7 @@
 #pragma once
 #include "Material.h"
 #include "Ray.h"
+#include "Constants.h"
 
 class Obj
 {

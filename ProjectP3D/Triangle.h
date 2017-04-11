@@ -1,5 +1,8 @@
 #pragma once
 #include "obj.h"
+#include "Constants.h"
+
+
 class Triangle :
 	public Obj
 {

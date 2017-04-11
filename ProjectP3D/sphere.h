@@ -1,5 +1,6 @@
 #pragma once
 #include "Obj.h"
+#include "Constants.h"
 
 class Sphere : public Obj
 {
