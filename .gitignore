@@ -6724,7 +6724,6 @@ ProjectP3D/Debug/vc140.pdb
 *.ads
 *.bat
 *.mak
-*.h
 *.mk
 *.pro
 *.c
