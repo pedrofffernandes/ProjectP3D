@@ -1,5 +1,5 @@
 #include "Header.h"
-
+#include <stdlib.h>
 
 void reshape(int w, int h)
 {
@@ -19,22 +19,27 @@ void drawScene()
 {	
 	INIT_TIMER
 	START_TIMER
-	for (int y = 0; y < RES_Y; y++)
-	{
-		glBegin(GL_POINTS);
-		for (int x = 0; x < RES_X; x++)
-		{	
-			Vect * color = new Vect();
-			(USE_DOF) ? multiSampleDOF(color, x, y) : multiSample(color, x, y);
+	if (USE_MONTECARLO) {
+		monteCarlo();
+	}
+	else {
+		for (int y = 0; y < RES_Y; y++)
+		{
+			glBegin(GL_POINTS);
+			for (int x = 0; x < RES_X; x++)
+			{
+				Vect * color = new Vect();
+				(USE_DOF) ? multiSampleDOF(color, x, y) : multiSample(color, x, y);
 
-			glColor3f(color->getX(), color->getY(), color->getZ());
-			glVertex2f(x, y);
-			
-			delete color;
+				glColor3f(color->getX(), color->getY(), color->getZ());
+				glVertex2f(x, y);
+
+				delete color;
+			}
+			glEnd();
+			glFlush();
 		}
-		glEnd();
-		glFlush();
-	} 
+	}
 	STOP_TIMER("draw")
 	printf("Terminou!\n");
 }
@@ -75,7 +80,49 @@ void multiSampleDOF(Vect * color, int x, int y) {
 }
 
 void monteCarlo() {
+	/*
+	std::list<Vect*> newColors;
+	std::list<Vect*> oldColors;
+	std::list<Vect*>::iterator newColor;
+	std::list<Vect*>::iterator oldColor;*/
+	Vect * newColors = (Vect*) malloc(sizeof(Vect*) * RES_X);
+	Vect * oldColors = (Vect*) malloc(sizeof(Vect*) * RES_X);
 
+	int y = 0;
+	for (int x = 0; x < RES_X + 1; x++) {					
+		Ray * ray = scene->getCamera()->PrimaryRay(x / NUMEROAMOSTRAS, y / NUMEROAMOSTRAS);
+		oldColors[x] = rayTracing(ray, 1, IOR);
+		//oldColors.push_back(rayTracing(ray, 1, IOR));
+	}
+
+	for (y = 1; y < RES_Y + 1; y++) {
+		int x = 0;
+		Ray * ray = scene->getCamera()->PrimaryRay(x / NUMEROAMOSTRAS, y / NUMEROAMOSTRAS);
+		newColors[x] = rayTracing(ray, 1, IOR);
+		for (int x = 1; x < RES_X + 1; x++) {
+			Ray * ray = scene->getCamera()->PrimaryRay(x / NUMEROAMOSTRAS, y / NUMEROAMOSTRAS);
+			newColors[x] = rayTracing(ray, 1, IOR);
+			if (!checkThreshold(oldColors[x - 1], oldColors[x], newColors[x - 1], newColors[x])) {
+				//monteCarlo2(&newColors, &oldColors, x, y); computes sub pixels
+			}
+			//Vect * color = average(oldColors[x - 1], oldColors[x], newColors[x - 1], newColors[x]);
+			//give to gl
+
+		}
+		oldColors = newColors;
+	}
+
+
+	
+	//oldColor = oldColors.begin();
+	
+		Ray * ray = scene->getCamera()->PrimaryRay(x / NUMEROAMOSTRAS, y / NUMEROAMOSTRAS);
+		Vect * sample = rayTracing(ray, 1, IOR);
+		//color->add(sample); //depth=1, ior=1.0
+		delete ray;
+		delete sample;
+	
+	
 }
 
 
