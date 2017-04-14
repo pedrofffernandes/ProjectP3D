@@ -16,6 +16,7 @@ public:
 	//Returns 0.0f if origin is in surface
 	float intersect(Ray * ray);
 	Vect* getNormal(Vect* point);
+	void bboxSetup(void);
 
 };
 

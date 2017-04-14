@@ -15,11 +15,8 @@
 // CONSTANTS
 #include "Constants.h"
 
+// Random Function
 #define ERAND (float)rand()/RAND_MAX
-// Control CONSTANTS
-#define USE_DOF false
-#define USE_SOFTSHADOWS false
-#define USE_OPEN_GL true /// SET THIS TO FALSE IF YOU WANT TO USE THE SAVE_BMP function
 
 // VARIABLES
 Scene * scene = NULL;

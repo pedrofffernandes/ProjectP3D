@@ -20,6 +20,7 @@ public:
 	//Intersects the Obj with a Ray
 	virtual float intersect(Ray * ray);
 	virtual Vect* getNormal(Vect* point);
+	virtual void bboxSetup() = 0;
 	void setBBox(BBox* bb) { _bbox = bb; }
 	BBox * get_bounding_box() { return _bbox; }
 	Material* getMat();

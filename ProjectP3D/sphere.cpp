@@ -6,21 +6,8 @@ Sphere::Sphere(Vect* position, float r, Material * mat) : Obj(mat)
 	_position = position;
 	_radius = r;
 	_radiusSquare = r * r;
-	// Computing Bounding Box
-	/// Check the minimum coordinates for the BBox
-	float x_min = position->getX() - _radius;
-	float y_min = position->getY() - _radius;
-	float z_min = position->getZ() - _radius;
-	Vect * min_point = new Vect(x_min - EPSILON, y_min - EPSILON, z_min - EPSILON);
-	/// Check the minimum coordinates for the BBox
-	float x_max = position->getX() + _radius;
-	float y_max = position->getY() + _radius;
-	float z_max = position->getZ() + _radius;
-	Vect * max_point = new Vect(x_max + EPSILON, y_max + EPSILON, z_max + EPSILON);
-	this->setBBox(new BBox(min_point, max_point));
-
-	delete min_point;
-	delete max_point;
+	// Setup Bounding Box
+	bboxSetup();
 }
 
 
@@ -69,4 +56,23 @@ Vect * Sphere::getNormal(Vect * point) {
 	Vect * result = new Vect(point);
 	result->minus(_position);
 	return result->normalize();
+}
+
+
+void Sphere::bboxSetup(void) {
+	// Computing Bounding Box
+	/// Check the minimum coordinates for the BBox
+	float x_min = _position->getX() - _radius; x_min -= EPSILON;
+	float y_min = _position->getY() - _radius; y_min -= EPSILON;
+	float z_min = _position->getZ() - _radius; z_min -= EPSILON;
+	Vect * min_point = new Vect(x_min, y_min, z_min);
+	/// Check the minimum coordinates for the BBox
+	float x_max = _position->getX() + _radius; x_max += EPSILON;
+	float y_max = _position->getY() + _radius; y_max += EPSILON;
+	float z_max = _position->getZ() + _radius; z_max += EPSILON;
+	Vect * max_point = new Vect(x_max, y_max, z_max);
+	this->setBBox(new BBox(min_point, max_point));
+	/// Deleting Pointers
+	delete min_point;
+	delete max_point;
 }

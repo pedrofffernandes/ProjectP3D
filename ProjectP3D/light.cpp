@@ -1,8 +1,6 @@
 #include "Light.h"
 #include <iostream>
 
-#define EPSILON 1e-3
-
 
 Light::Light(Vect* position, Vect* rgb)
 {
