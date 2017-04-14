@@ -1,18 +1,20 @@
+#pragma once
 #include <iostream>
 #include <chrono>
 #include <vector>
 #include <random>
 #include <stdio.h>
 #include <stdlib.h>
+
 // OpenGL
 #include <GL/glut.h>
+
 // Project Classes
 #include "scene.h"
+
 // CONSTANTS
-#define MAX_DEPTH 2
-#define IOR 1.0
-#define NUMEROAMOSTRAS 2
-#define APERTURE (float) 0.00000001
+#include "Constants.h"
+
 #define ERAND (float)rand()/RAND_MAX
 // Control CONSTANTS
 #define USE_DOF false

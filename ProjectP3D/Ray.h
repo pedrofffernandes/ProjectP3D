@@ -1,5 +1,6 @@
 #pragma once
 #include "Vect.h"
+#include "Constants.h"
 
 class Ray
 {

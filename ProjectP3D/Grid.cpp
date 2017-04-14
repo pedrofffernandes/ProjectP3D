@@ -95,6 +95,7 @@ void Grid::setup(std::list<Obj*> objects)
 }
 /*
 Intersection Grid::traverse(Ray* ray) {
-
+	Intersection a;
+	return a;
 }
 */

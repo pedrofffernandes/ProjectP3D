@@ -3,8 +3,10 @@
 
 #include "Material.h"
 #include "Ray.h"
+#include "Constants.h"
 #include "BBox.h"
 #include "Constants.h"
+
 
 class Obj
 {

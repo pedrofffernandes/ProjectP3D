@@ -60,14 +60,14 @@ void multiSampleDOF(Vect * color, int x, int y) {
 			Vect * focalp = scene->getCamera()->GetFocalPoint(x + ((n + ERAND) / NUMEROAMOSTRAS), y + ((m + ERAND) / NUMEROAMOSTRAS));
 			for (int o = 0; o < NUMEROAMOSTRAS; o++) {
 				for (int q = 0; q < NUMEROAMOSTRAS; q++) {
-					Ray * ray = scene->getCamera()->PrimaryRayDOF(focalp, APERTURE);
+					Ray * ray = scene->getCamera()->PrimaryRayDOF(focalp);
 					Vect * sample = rayTracing(ray, 1, IOR);
 					color->add(sample); //depth=1, ior=1.0
 					delete ray;
 					delete sample;
 				}
 			}
-			color->multiply((float)1 / (NUMEROAMOSTRAS*NUMEROAMOSTRAS));
+			color->multiply((float)1 / (NUMEROAMOSTRAS));
 			delete focalp;
 		}
 	}
@@ -103,7 +103,6 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 	for (itL = lights.begin(); itL != lights.end(); itL++) {			//Iterates over all the lights
 		Vect * lightD = (USE_SOFTSHADOWS) ? ((Light*)*itL)->getLVectSoft(hit) : ((Light*)*itL)->getLVect(hit);
 		
-		//std::cout << lightD->getX() << '\n';
 
 		if(lightD->dotP(normal) > 0) {										//If surface faces light
 			Vect * newO = new Vect(hit);

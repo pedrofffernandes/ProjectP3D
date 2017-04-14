@@ -5,12 +5,12 @@
 
 #include "Vect.h"
 #include "Ray.h"
+#include "Constants.h"
 
-#define ERAND (float)rand()/RAND_MAX
 
-#define  M_PI (float) 3.1415926535
+#define M_PI (float) 3.1415926535
 #define RAND (float)rand()/RAND_MAX
-#define PIRAND (float)(rand()/RAND_MAX)*M_PI
+#define PIRAND (float)rand()/RAND_MAX*M_PI
 
 
 class Camera
@@ -70,12 +70,10 @@ public:
 	int Camera::getResY();
 	//Computes the primaryRay
 	Ray * Camera::PrimaryRay(float x, float y);
-	Ray * Camera::PrimaryRayDOF(Vect * focalp, float aperture);
-	Vect * Camera::originDOF(float aperture);
+	Ray * Camera::PrimaryRayDOF(Vect * focalp);
+	Vect * Camera::originDOF();
 	Vect* Camera::GetFocalPoint(float x, float y);
 	Vect * getZe();
-	Ray* Camera::getPrimaryRayDOF(Vect*);
-
 };
 
 #endif // !_CAMERA_H
