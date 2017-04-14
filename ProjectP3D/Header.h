@@ -10,7 +10,6 @@
 #include "scene.h"
 // CONSTANTS
 #define MAX_DEPTH 2
-#define EPSILON 1e-4
 #define IOR 1.0
 #define NUMEROAMOSTRAS 2
 #define APERTURE (float) 0.00000001

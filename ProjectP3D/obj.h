@@ -4,9 +4,7 @@
 #include "Material.h"
 #include "Ray.h"
 #include "BBox.h"
-
-#define EPSILON 1e-4
-#define HUGE_VALUE 1000000;
+#include "Constants.h"
 
 class Obj
 {

@@ -227,6 +227,5 @@ int main(int argc, char**argv)
 		drawScene_withoutOPENGL(scene);
 	}
 	
-	
 	return 0;
 }
