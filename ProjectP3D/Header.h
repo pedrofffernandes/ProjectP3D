@@ -27,6 +27,7 @@ int RES_X, RES_Y;
 Vect * rayTracing(Ray * ray, int depth, float ior);
 void multiSample(Vect * color, int x, int y);
 void multiSampleDOF(Vect * color, int x, int y);
+void monteCarlo();
 Vect* monteCarlo2(float x, float y, std::vector<Vect*> &monte, int a, int b, int depth);
 bool checkThreshold(Vect*, Vect*, Vect*, Vect*);
 bool inShadow(Ray* ray);

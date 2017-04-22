@@ -84,33 +84,53 @@ void monteCarlo() {
 	std::list<Vect*> newColors;
 	std::list<Vect*> oldColors;
 	std::list<Vect*>::iterator newColor;
-	std::list<Vect*>::iterator oldColor;*/
-	Vect * newColors = (Vect*) malloc(sizeof(Vect*) * RES_X);
-	Vect * oldColors = (Vect*) malloc(sizeof(Vect*) * RES_X);
+	std::list<Vect*>::iterator oldColor;
+	*/
+
+	/*vect * newColors = (Vect*) malloc(sizeof(Vect*) * RES_X);
+	vect * oldColors = (Vect*) malloc(sizeof(Vect*) * RES_X);*/
+
+	std::vector<Vect*> newColors(RES_X + 1);
+	std::vector<Vect*> oldColors(RES_X + 1);
 
 	int y = 0;
 	for (int x = 0; x < RES_X + 1; x++) {					
 		Ray * ray = scene->getCamera()->PrimaryRay(x / NUMEROAMOSTRAS, y / NUMEROAMOSTRAS);
 		oldColors[x] = rayTracing(ray, 1, IOR);
-		//oldColors.push_back(rayTracing(ray, 1, IOR));
+		//oldColors.push_back(rayTracing(ray, 1, IOR));							
 	}
 
 	for (y = 1; y < RES_Y + 1; y++) {
 		int x = 0;
 		Ray * ray = scene->getCamera()->PrimaryRay(x / NUMEROAMOSTRAS, y / NUMEROAMOSTRAS);
 		newColors[x] = rayTracing(ray, 1, IOR);
+
+		glBegin(GL_POINTS);
 		for (int x = 1; x < RES_X + 1; x++) {
 			Ray * ray = scene->getCamera()->PrimaryRay(x / NUMEROAMOSTRAS, y / NUMEROAMOSTRAS);
 			newColors[x] = rayTracing(ray, 1, IOR);
-			if (!checkThreshold(oldColors[x - 1], oldColors[x], newColors[x - 1], newColors[x])) {
-				//monteCarlo2(&newColors, &oldColors, x, y); computes sub pixels
-			}
-			//Vect * color = average(oldColors[x - 1], oldColors[x], newColors[x - 1], newColors[x]);
-			//give to gl
 
+			std::vector<Vect*> monte(DEPTH_MONTECARLO * DEPTH_MONTECARLO);
+			for (int i = 0; i < DEPTH_MONTECARLO * DEPTH_MONTECARLO; i++) monte[i] = nullptr;
+			monte[0]										 = newColors[x];
+			monte[DEPTH_MONTECARLO - 1]						 = newColors[x - 1];
+			monte[DEPTH_MONTECARLO * (DEPTH_MONTECARLO - 1)] = oldColors[x];
+			monte[(DEPTH_MONTECARLO * DEPTH_MONTECARLO) - 1] = oldColors[x - 1];
+
+			Vect* color = monteCarlo2(x, y, monte, 0, 0, 1);
+			
+			glColor3f(color->getX(), color->getY(), color->getZ());
+			glVertex2f(x, y);
+			
+			delete ray;
 		}
-		oldColors = newColors;
+		glEnd();
+		glFlush();
+		delete ray;
+		oldColors.swap(newColors);
 	}
+} 
+
 bool checkThreshold(Vect* sw, Vect* se, Vect* ne, Vect* nw) {
 	if (!sw->checkDiff(se, DIFF_MONTECARLO)) return false;
 	if (!sw->checkDiff(ne, DIFF_MONTECARLO)) return false;
