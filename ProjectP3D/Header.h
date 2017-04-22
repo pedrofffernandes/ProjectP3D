@@ -27,6 +27,7 @@ int RES_X, RES_Y;
 Vect * rayTracing(Ray * ray, int depth, float ior);
 void multiSample(Vect * color, int x, int y);
 void multiSampleDOF(Vect * color, int x, int y);
+bool checkThreshold(Vect*, Vect*, Vect*, Vect*);
 bool inShadow(Ray* ray);
 void drawScene_withoutOPENGL(Scene);
 // Declarations

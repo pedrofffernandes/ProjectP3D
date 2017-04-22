@@ -111,6 +111,15 @@ void monteCarlo() {
 		}
 		oldColors = newColors;
 	}
+bool checkThreshold(Vect* sw, Vect* se, Vect* ne, Vect* nw) {
+	if (!sw->checkDiff(se, DIFF_MONTECARLO)) return false;
+	if (!sw->checkDiff(ne, DIFF_MONTECARLO)) return false;
+	if (!sw->checkDiff(nw, DIFF_MONTECARLO)) return false;
+	if (!nw->checkDiff(ne, DIFF_MONTECARLO)) return false;
+	if (!nw->checkDiff(se, DIFF_MONTECARLO)) return false;
+	if (!ne->checkDiff(se, DIFF_MONTECARLO)) return false;
+	return true;
+}
 
 
 	
