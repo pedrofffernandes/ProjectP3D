@@ -110,12 +110,12 @@ void monteCarlo() {
 			Ray * ray = scene->getCamera()->PrimaryRay(x / NUMEROAMOSTRAS, y / NUMEROAMOSTRAS);
 			newColors[x] = rayTracing(ray, 1, IOR);
 
-			std::vector<Vect*> monte(DEPTH_MONTECARLO * DEPTH_MONTECARLO);
-			for (int i = 0; i < DEPTH_MONTECARLO * DEPTH_MONTECARLO; i++) monte[i] = nullptr;
+			std::vector<Vect*> monte(SIZE_MONTECARLO * SIZE_MONTECARLO);
+			//for (int i = 0; i < SIZE_MONTECARLO * SIZE_MONTECARLO; i++) monte[i] = nullptr;
 			monte[0]										 = newColors[x];
-			monte[DEPTH_MONTECARLO - 1]						 = newColors[x - 1];
-			monte[DEPTH_MONTECARLO * (DEPTH_MONTECARLO - 1)] = oldColors[x];
-			monte[(DEPTH_MONTECARLO * DEPTH_MONTECARLO) - 1] = oldColors[x - 1];
+			monte[SIZE_MONTECARLO - 1]						 = newColors[x - 1];
+			monte[SIZE_MONTECARLO * (SIZE_MONTECARLO - 1)] = oldColors[x];
+			monte[(SIZE_MONTECARLO * SIZE_MONTECARLO) - 1] = oldColors[x - 1];
 
 			Vect* color = monteCarlo2(x, y, monte, 0, 0, 1);
 			
@@ -133,10 +133,10 @@ void monteCarlo() {
 
 bool checkThreshold(Vect* sw, Vect* se, Vect* ne, Vect* nw) {
 	if (!sw->checkDiff(se, DIFF_MONTECARLO)) return false;
-	if (!sw->checkDiff(ne, DIFF_MONTECARLO)) return false;
+	if (!sw->checkDiff(ne, DIFF_MONTECARLO*1.4)) return false;
 	if (!sw->checkDiff(nw, DIFF_MONTECARLO)) return false;
 	if (!nw->checkDiff(ne, DIFF_MONTECARLO)) return false;
-	if (!nw->checkDiff(se, DIFF_MONTECARLO)) return false;
+	if (!nw->checkDiff(se, DIFF_MONTECARLO*1.4)) return false;
 	if (!ne->checkDiff(se, DIFF_MONTECARLO)) return false;
 	return true;
 }
@@ -144,10 +144,10 @@ bool checkThreshold(Vect* sw, Vect* se, Vect* ne, Vect* nw) {
 Vect* monteCarlo2(float x, float y, std::vector<Vect*> &monte, int a, int b, int depth) {
 	Vect* c1, *c2, *c3, *c4;	//Colors
 
-	int step = (DEPTH_MONTECARLO / depth) -1;
+	int step = (DEPTH_MONTECARLO / depth);
 
 	//ne corner
-	int index = (a * DEPTH_MONTECARLO) + b;
+	int index = (a * SIZE_MONTECARLO) + b;
 	if (monte[index] == nullptr) {
 		Ray * ray = scene->getCamera()->PrimaryRay(x, y);
 		c1 = rayTracing(ray, 1, IOR);
@@ -156,7 +156,7 @@ Vect* monteCarlo2(float x, float y, std::vector<Vect*> &monte, int a, int b, int
 	} else { c1 = monte[index]; }
 	
 	//nw corner
-	index = (a * DEPTH_MONTECARLO) + b + step;
+	index = (a * SIZE_MONTECARLO) + b + step;
 	if (monte[index] == nullptr) {
 		Ray * ray = scene->getCamera()->PrimaryRay((x - (1 / depth)), y);
 		c2 = rayTracing(ray, 1, IOR);
@@ -165,7 +165,7 @@ Vect* monteCarlo2(float x, float y, std::vector<Vect*> &monte, int a, int b, int
 	} else { c2 = monte[index]; }
 
 	//se corner
-	index = ((a + step) * DEPTH_MONTECARLO) + b;
+	index = ((a + step) * SIZE_MONTECARLO) + b;
 	if (monte[index] == nullptr) {
 		Ray * ray = scene->getCamera()->PrimaryRay(x, (y - (1 / depth)));
 		c3 = rayTracing(ray, 1, IOR);
@@ -174,7 +174,7 @@ Vect* monteCarlo2(float x, float y, std::vector<Vect*> &monte, int a, int b, int
 	} else { c3 = monte[index]; }
 
 	//sw corner
-	index = ((a + step) * DEPTH_MONTECARLO) + b + step;
+	index = ((a + step) * SIZE_MONTECARLO) + b + step;
 	if (monte[index] == nullptr) {
 		Ray * ray = scene->getCamera()->PrimaryRay((x - (1 / depth)), (y - (1 / depth)));
 		c4 = rayTracing(ray, 1, IOR);
