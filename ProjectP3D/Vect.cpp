@@ -119,6 +119,14 @@ Vect * Vect::positive()
 	return new Vect(x, y, z);
 }
 
+bool Vect::checkDiff(Vect * vec, float diff)
+{
+	if (fabs(_x - vec->getX()) > diff) return false;
+	if (fabs(_y - vec->getY()) > diff) return false;
+	if (fabs(_z - vec->getZ()) > diff) return false;
+	return true;
+}
+
 // Max
 /// Returns the an integer that serves
 /// to identify, which coordinate has the

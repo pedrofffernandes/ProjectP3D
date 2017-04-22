@@ -39,6 +39,7 @@ public:
 	//absf to all vector elements
 	Vect * positive();
 
+	bool checkDiff(Vect*, float);
 	int max();
 	//Compute det of x and y
 	float det2D(Vect * vect);
