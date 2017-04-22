@@ -40,6 +40,8 @@ public:
 	Vect * positive();
 
 	bool checkDiff(Vect*, float);
+	Vect * monteAdd(Vect*, Vect*, Vect*);
+
 	int max();
 	//Compute det of x and y
 	float det2D(Vect * vect);

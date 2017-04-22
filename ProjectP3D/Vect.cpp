@@ -127,6 +127,15 @@ bool Vect::checkDiff(Vect * vec, float diff)
 	return true;
 }
 
+Vect * Vect::monteAdd(Vect * v1, Vect * v2, Vect * v3) {
+	_x += v1->getX() + v2->getX() + v3->getX();
+	_y += v1->getY() + v2->getY() + v3->getY();
+	_z += v1->getZ() + v2->getZ() + v3->getZ();
+
+	this->multiply((float)1 / 4);
+	return this;
+}
+
 // Max
 /// Returns the an integer that serves
 /// to identify, which coordinate has the
