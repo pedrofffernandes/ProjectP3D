@@ -121,17 +121,61 @@ bool checkThreshold(Vect* sw, Vect* se, Vect* ne, Vect* nw) {
 	return true;
 }
 
+Vect* monteCarlo2(float x, float y, std::vector<Vect*> &monte, int a, int b, int depth) {
+	Vect* c1, *c2, *c3, *c4;	//Colors
 
-	
-	//oldColor = oldColors.begin();
-	
-		Ray * ray = scene->getCamera()->PrimaryRay(x / NUMEROAMOSTRAS, y / NUMEROAMOSTRAS);
-		Vect * sample = rayTracing(ray, 1, IOR);
-		//color->add(sample); //depth=1, ior=1.0
+	int step = (DEPTH_MONTECARLO / depth) -1;
+
+	//ne corner
+	int index = (a * DEPTH_MONTECARLO) + b;
+	if (monte[index] == nullptr) {
+		Ray * ray = scene->getCamera()->PrimaryRay(x, y);
+		c1 = rayTracing(ray, 1, IOR);
+		monte[index] = c1;
 		delete ray;
-		delete sample;
+	} else { c1 = monte[index]; }
 	
+	//nw corner
+	index = (a * DEPTH_MONTECARLO) + b + step;
+	if (monte[index] == nullptr) {
+		Ray * ray = scene->getCamera()->PrimaryRay((x - (1 / depth)), y);
+		c2 = rayTracing(ray, 1, IOR);
+		monte[index] = c2;
+		delete ray;
+	} else { c2 = monte[index]; }
+
+	//se corner
+	index = ((a + step) * DEPTH_MONTECARLO) + b;
+	if (monte[index] == nullptr) {
+		Ray * ray = scene->getCamera()->PrimaryRay(x, (y - (1 / depth)));
+		c3 = rayTracing(ray, 1, IOR);
+		monte[index] = c3;
+		delete ray;
+	} else { c3 = monte[index]; }
+
+	//sw corner
+	index = ((a + step) * DEPTH_MONTECARLO) + b + step;
+	if (monte[index] == nullptr) {
+		Ray * ray = scene->getCamera()->PrimaryRay((x - (1 / depth)), (y - (1 / depth)));
+		c4 = rayTracing(ray, 1, IOR);
+		monte[index] = c4;
+		delete ray;
+	} else { c4 = monte[index]; }
 	
+
+
+	if (!checkThreshold(c1, c2, c3, c4) && depth < DEPTH_MONTECARLO) {
+		depth *= 2;
+		c1 = monteCarlo2(x, y, monte, a, b, depth);
+		c2 = monteCarlo2((x - (1 / depth)), y, monte, a, b + (DEPTH_MONTECARLO / depth), depth);
+		c3 = monteCarlo2(x, (y - (1 / depth)), monte, a + (DEPTH_MONTECARLO / depth), b, depth);
+		c4 = monteCarlo2((x - (1 / depth)), (y - (1 / depth)), monte, a + (DEPTH_MONTECARLO / depth), b + (DEPTH_MONTECARLO / depth), depth);
+	}
+	c1->monteAdd(c2, c3, c4);
+	//delete c2;
+	//delete c3;
+	//delete c4;
+	return c1;
 }
 
 
