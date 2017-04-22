@@ -121,10 +121,8 @@ Vect * Vect::positive()
 
 bool Vect::checkDiff(Vect * vec, float diff)
 {
-	if (fabs(_x - vec->getX()) > diff) return false;
-	if (fabs(_y - vec->getY()) > diff) return false;
-	if (fabs(_z - vec->getZ()) > diff) return false;
-	return true;
+	float diffAux = fabs(_x - vec->getX()) + fabs(_y - vec->getY()) + fabs(_z - vec->getZ());
+	return (diffAux < diff) ? true : false;
 }
 
 Vect * Vect::monteAdd(Vect * v1, Vect * v2, Vect * v3) {
