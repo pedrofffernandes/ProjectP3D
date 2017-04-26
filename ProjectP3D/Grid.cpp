@@ -103,32 +103,94 @@ void Grid::setup(std::list<Obj*> objects)
 limit * Grid::kkAlgorithmn(Ray * r)
 {
 	// 1) Initialize t_min and t_max
-	Vect * t_min = new Vect(-HUGE_VALUE, -HUGE_VALUE, -HUGE_VALUE);
-	Vect * t_max = new Vect(HUGE_VALUE, HUGE_VALUE, HUGE_VALUE);
+	float tnear = -HUGE_VALUE;
+	float tfar = HUGE_VALUE;
 
-	// 2) Initializing the Value
-	float Vo = r->getO()->getX();
-	float Vd = r->getD()->getX();
-	float Vmin = _bbox->getMinX();
-	float Vmax = _bbox->getMaxX();
+	/// Outher auxiliar values
+	float Vo = 0;
+	float Vd = 0;
+	float Vmin = 0;
+	float Vmax = 0;
+	float tmin = 0;
+	float tmax = 0;
 
-	// 3) Check if ray doesnt intersect
-	if (Vd == 0)
-		if (Vo < Vmin || Vo > Vmax)
-			return nullptr;
+	for (int i = 0; i < 3; i++) {
+		// 2) Initializing the Value
+		switch (i) {
+		case 0: /// X coordinate
+			Vo = r->getO()->getX();
+			Vd = r->getD()->getX();
+			Vmin = _bbox->getMinX();
+			Vmax = _bbox->getMaxX();
+			break;
+		case 1: /// Y coordinate
+			Vo = r->getO()->getY();
+			Vd = r->getD()->getY();
+			Vmin = _bbox->getMinY();
+			Vmax = _bbox->getMaxY();
+			break;
+		case 2: /// Z coordinate
+			Vo = r->getO()->getZ();
+			Vd = r->getD()->getZ();
+			Vmin = _bbox->getMinZ();
+			Vmax = _bbox->getMaxZ();
+			break;
+		}
+		// 3) Check if ray doesnt intersect
+		if (Vd == 0)
+			/// Ray is parallel
+			if (Vo < Vmin || Vo > Vmax)
+				/// Ray doesnt intersect
+				return nullptr;
+			else
+				/// go to next coordinate
+				break;
+		// 4) Compute Intersections
+		tmin = (Vmin - Vo) / Vd;
+		tmax = (Vmax - Vo) / Vd;
+		/// switch values if tmin < tmax
+		if (tmin < tmax) {
+			float aux = tmin;
+			tmin = tmax;
+			tmax = aux;
+		}
+		/// update tmin and tmax
+		if (tmin > tnear) tnear = tmin;
+		if (tmax < tfar) tfar = tmax;
+		// 5)
+		if (tnear > tfar) return nullptr;
+		// 6)
+		/// ray points in the opposite direction
+		if (tfar < 0) return nullptr;
+	} // END of FOR
 
-	// 4) Compute Intersections
-	float tmin_v = (Vmin - Vo) / Vd;
-	float tmax_v = (Vmax - Vo) / Vd;
+	// Compute intersection points
+	/// min point: min = Ro + tnear*Rd
+	float min_x = r->getO()->getX() + (tnear * r->getD()->getX());
+	float min_y = r->getO()->getY() + (tnear * r->getD()->getY());
+	float min_z = r->getO()->getZ() + (tnear * r->getD()->getZ());
+	/// max point: max = Ro + tfar*Rd
+	float max_x = r->getO()->getX() + (tfar * r->getD()->getX());
+	float max_y = r->getO()->getY() + (tfar * r->getD()->getY());
+	float max_z = r->getO()->getZ() + (tfar * r->getD()->getZ());
 
-	/// Switch values if ( t_min_x < t_max_x)
-	if (tmin_v > tmax_v) {
-		float aux = tmin_v;
-		tmin_v = tmax_v;
-		tmax_v = aux;
-	}
+	limit * l;
+	l->min = new Vect(min_x, min_y, min_z);
+	l->max = new Vect(max_x, max_y, max_z);
 
+	return l;
+}
 
+intersection * Grid::traverse(Ray * ray)
+{
+	// Check if ray hits the grid
+	limit * l = kkAlgorithmn(ray);
+	if (l == nullptr)
+		return nullptr;
 
+	// Compute the starting Cell
+	/// TODO
+	// traverse the grid
+	/// TODO
 	return nullptr;
 }

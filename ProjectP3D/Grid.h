@@ -7,8 +7,9 @@
 #include "obj.h"
 #include "Cell.h"
 #include "Constants.h"
+#include "Structs.h"
 
-struct limit;
+
 
 class Grid
 {
@@ -27,10 +28,6 @@ public:
 	//Intersection traverse(Ray* ray);
 	float clamp(float n, float min, float max) { return n <= min ? min : n >= max ? max : n; }
 	limit * kkAlgorithmn(Ray*);
+	intersection * traverse(Ray*);
 
-};
-
-struct limit {
-	Vect * min;
-	Vect * max;
 };

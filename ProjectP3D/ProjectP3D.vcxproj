@@ -35,6 +35,7 @@
     <ClCompile Include="Vect.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AuxFunctions.h" />
     <ClInclude Include="BBox.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Constants.h" />
@@ -49,6 +50,7 @@
     <ClInclude Include="Ray.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="sphere.h" />
+    <ClInclude Include="Structs.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="Vect.h" />
   </ItemGroup>
