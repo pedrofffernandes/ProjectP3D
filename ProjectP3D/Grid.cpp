@@ -56,19 +56,24 @@ void Grid::setup(std::list<Obj*> objects)
 	float wy = max_point->getY() - min_point->getY();
 	float wz = max_point->getZ() - min_point->getZ();
 
+	/// cbrt is the cubic root
 	float s = cbrt((wx*wy*wz) / num_objects);
 	
-	_Nx = static_cast<int> (trunc(M*wx / s) + 1);
-	_Ny = static_cast<int> (trunc(M*wy / s) + 1);
-	_Nz = static_cast<int> (trunc(M*wz / s) + 1);
+	_Nx = static_cast<int> (ceil(M*wx / s));
+	_Ny = static_cast<int> (ceil(M*wy / s));
+	_Nz = static_cast<int> (ceil(M*wz / s));
 
 	int cells_size = _Nx*_Ny*_Nz;
 
+	/// inicializacao das celulas da grip a empty
+	/// isto para depois se poder aceder a elas
 	for (int i = 0; i < cells_size;i++) {
 		_cells->push_back(dynamic_cast<Cell*>(new Cell()));
 	}
 
+	// Store the objects in the cells
 	for (std::list<Obj*>::iterator it = objects.begin(); it != objects.end(); it++) {
+		/// Compute indices of both cells that contain min and max coord of obj bbox
 		bbox = ((Obj*)*it)->get_bounding_box();
 		int ixmin = static_cast<int> (clamp((bbox->getMinX() - min_point->getX())* (float) _Nx / (max_point->getX() - min_point->getX()), 0, (float) _Nx - 1));
 		int iymin = static_cast<int> (clamp((bbox->getMinY() - min_point->getY())* (float) _Ny / (max_point->getY() - min_point->getY()), 0, (float) _Ny - 1));
@@ -76,7 +81,8 @@ void Grid::setup(std::list<Obj*> objects)
 		int ixmax = static_cast<int> (clamp((bbox->getMaxX() - min_point->getX())* (float) _Nx / (max_point->getX() - min_point->getX()), 0, (float) _Nx - 1));
 		int iymax = static_cast<int> (clamp((bbox->getMaxY() - min_point->getY())* (float) _Ny / (max_point->getY() - min_point->getY()), 0, (float) _Ny - 1));
 		int izmax = static_cast<int> (clamp((bbox->getMaxZ() - min_point->getZ())* (float) _Nz / (max_point->getZ() - min_point->getZ()), 0, (float) _Nz - 1));
-
+		
+		/// Insert the object in the overlaped cells
 		for (int iz = izmin; iz <= izmax; iz++) {
 			for (int iy = iymin; iy <= iymax; iy++) {
 				for (int ix = ixmin; ix <= ixmax; ix++) {
@@ -87,15 +93,42 @@ void Grid::setup(std::list<Obj*> objects)
 		}
 
 	}
+	/// Delete pointers
 	delete min_point;
 	delete max_point;
 	delete bbox;
 
 	
 }
-/*
-Intersection Grid::traverse(Ray* ray) {
-	Intersection a;
-	return a;
+limit * Grid::kkAlgorithmn(Ray * r)
+{
+	// 1) Initialize t_min and t_max
+	Vect * t_min = new Vect(-HUGE_VALUE, -HUGE_VALUE, -HUGE_VALUE);
+	Vect * t_max = new Vect(HUGE_VALUE, HUGE_VALUE, HUGE_VALUE);
+
+	// 2) Initializing the Value
+	float Vo = r->getO()->getX();
+	float Vd = r->getD()->getX();
+	float Vmin = _bbox->getMinX();
+	float Vmax = _bbox->getMaxX();
+
+	// 3) Check if ray doesnt intersect
+	if (Vd == 0)
+		if (Vo < Vmin || Vo > Vmax)
+			return nullptr;
+
+	// 4) Compute Intersections
+	float tmin_v = (Vmin - Vo) / Vd;
+	float tmax_v = (Vmax - Vo) / Vd;
+
+	/// Switch values if ( t_min_x < t_max_x)
+	if (tmin_v > tmax_v) {
+		float aux = tmin_v;
+		tmin_v = tmax_v;
+		tmax_v = aux;
+	}
+
+
+
+	return nullptr;
 }
-*/

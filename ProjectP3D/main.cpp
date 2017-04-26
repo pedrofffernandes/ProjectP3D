@@ -58,8 +58,8 @@ void multiSampleDOF(Vect * color, int x, int y) {
 	for (int n = 0; n < NUMEROAMOSTRAS; n++) {
 		for (int m = 0; m < NUMEROAMOSTRAS; m++) {
 			Vect * focalp = scene->getCamera()->GetFocalPoint(x + ((n + ERAND) / NUMEROAMOSTRAS), y + ((m + ERAND) / NUMEROAMOSTRAS));
-			for (int o = 0; o < NUMEROAMOSTRAS; o++) {
-				for (int q = 0; q < NUMEROAMOSTRAS; q++) {
+			for (int o = 0; o < DOF_SAMPLES; o++) {
+				for (int q = 0; q < DOF_SAMPLES; q++) {
 					Ray * ray = scene->getCamera()->PrimaryRayDOF(focalp);
 					Vect * sample = rayTracing(ray, 1, IOR);
 					color->add(sample); //depth=1, ior=1.0
@@ -67,7 +67,7 @@ void multiSampleDOF(Vect * color, int x, int y) {
 					delete sample;
 				}
 			}
-			color->multiply((float)1 / (NUMEROAMOSTRAS));
+			color->multiply((float)1 / (DOF_SAMPLES));
 			delete focalp;
 		}
 	}

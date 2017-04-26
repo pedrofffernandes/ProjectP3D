@@ -9,6 +9,7 @@ BBox::BBox(Vect* min, Vect* max)
 }
 
 
-BBox::~BBox()
-{
+BBox::~BBox() {
+	delete _min_point;
+	delete _max_point;
 }

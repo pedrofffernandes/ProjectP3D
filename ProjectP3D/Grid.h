@@ -8,12 +8,7 @@
 #include "Cell.h"
 #include "Constants.h"
 
-
-//traverse result
-struct Intersection {
-	Obj* obj;
-	float dist;
-};
+struct limit;
 
 class Grid
 {
@@ -31,5 +26,11 @@ public:
 	void setup(std::list<Obj*>);
 	//Intersection traverse(Ray* ray);
 	float clamp(float n, float min, float max) { return n <= min ? min : n >= max ? max : n; }
+	limit * kkAlgorithmn(Ray*);
+
 };
 
+struct limit {
+	Vect * min;
+	Vect * max;
+};
