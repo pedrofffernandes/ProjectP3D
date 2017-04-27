@@ -188,9 +188,59 @@ intersection * Grid::traverse(Ray * ray)
 	if (l == nullptr)
 		return nullptr;
 
-	// Compute the starting Cell
-	/// TODO
+	// Compute the starting Cell indexes
+	int ix, iy, iz;
+	/// Ray Origin Coordinates
+	float ox = ray->getO()->getX();
+	float oy = ray->getO()->getY();
+	float oz = ray->getO()->getZ();
+	/// Grid BBox min point vertices
+	float min_x = _bbox->getMinX();
+	float min_y = _bbox->getMinY();
+	float min_z = _bbox->getMinZ();
+	/// Grid BBox max point vertices
+	float max_x = _bbox->getMaxX();
+	float max_y = _bbox->getMaxY();
+	float max_z = _bbox->getMaxZ();
+	/// First intersection point coordinates
+	float tmin_x = l->min->getX();
+	float tmin_y = l->min->getY();
+	float tmin_z = l->min->getZ();
+	/// Second intersection point coordinates
+	float tmax_x = l->max->getX();
+	float tmax_y = l->max->getY();
+	float tmax_z = l->max->getZ();
+	/// Check if the ray comes from inside the GRID
+	if (_bbox->inside(ray->getO())) {
+		ix = clamp((ox - min_x) * _Nx / (max_x - min_x), 0, _Nx - 1);
+		iy = clamp((oy - min_y) * _Ny / (max_y - min_y), 0, _Ny - 1);
+		iz = clamp((oz - min_z) * _Nz / (max_z - min_z), 0, _Nz - 1);
+	} else {
+		ix = clamp((tmin_x - min_x) * _Nx / (max_x - min_x), 0, _Nx - 1);
+		iy = clamp((tmin_y - min_y) * _Ny / (max_y - min_y), 0, _Ny - 1);
+		iz = clamp((tmin_z - min_z) * _Nz / (max_z - min_z), 0, _Nz - 1);
+	}
 	// traverse the grid
-	/// TODO
+	/// 1) Set Up Grid Traversal
+	float dtx = (tmax_x - tmin_x) / _Nx;
+	float dty = (tmax_y - tmin_y) / _Ny;
+	float dtz = (tmax_z - tmin_z) / _Nz;
+
+	float tnext_x, tnext_y, tnext_z;
+	int istep_x, istep_y, istep_z;
+	int istop_x, istop_y, istop_z;
+
+	tnext_x = tmin_x + (ix + 1) * dtx;
+	istep_x = +1;
+	istop_x = _Nx;
+
+	tnext_y = tmin_y + (iy + 1) * dty;
+	istep_y = +1;
+	istop_y = _Ny;
+
+	tnext_z = tmin_z + (iz + 1) * dtz;
+	istep_z = +1;
+	istop_z = _Nz;
+
 	return nullptr;
 }

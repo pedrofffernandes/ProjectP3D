@@ -19,5 +19,6 @@ public:
 	float getMaxX() { return _max_point->getX(); }
 	float getMaxY() { return _max_point->getY(); }
 	float getMaxZ() { return _max_point->getZ(); }
+	bool inside(Vect*); /// Returns true if the point is inside the BBox
 };
 

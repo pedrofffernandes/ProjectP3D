@@ -8,6 +8,7 @@
 #include "Cell.h"
 #include "Constants.h"
 #include "Structs.h"
+#include "AuxFunctions.h"
 
 
 
@@ -26,7 +27,6 @@ public:
 	~Grid();
 	void setup(std::list<Obj*>);
 	//Intersection traverse(Ray* ray);
-	float clamp(float n, float min, float max) { return n <= min ? min : n >= max ? max : n; }
 	limit * kkAlgorithmn(Ray*);
 	intersection * traverse(Ray*);
 
