@@ -86,6 +86,13 @@ void monteCarlo() {
 	std::list<Vect*>::iterator newColor;
 	std::list<Vect*>::iterator oldColor;
 	*/
+int LIndex(int x, int y, int m, int n) {
+	return n + m * NUMEROAMOSTRAS + ((NUMEROAMOSTRAS > 1) ? x * RES_X : x )+ y * RES_Y;
+}
+
+int LIndex(int x, int y, int m, int n, int o, int q) {
+	return q + o * NUMEROAMOSTRAS_DOF + n * NUMEROAMOSTRAS + m * NUMEROAMOSTRAS + x * RES_X + y * RES_Y;
+}
 
 	/*vect * newColors = (Vect*) malloc(sizeof(Vect*) * RES_X);
 	vect * oldColors = (Vect*) malloc(sizeof(Vect*) * RES_X);*/

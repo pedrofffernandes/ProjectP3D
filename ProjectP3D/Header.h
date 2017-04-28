@@ -17,8 +17,6 @@
 
 #define ERAND (float)rand()/RAND_MAX
 // Control CONSTANTS
-#define USE_DOF false
-#define USE_SOFTSHADOWS false
 #define USE_OPEN_GL true /// SET THIS TO FALSE IF YOU WANT TO USE THE SAVE_BMP function
 
 // VARIABLES
@@ -27,6 +25,8 @@ int RES_X, RES_Y;
 Vect * rayTracing(Ray * ray, int depth, float ior);
 void multiSample(Vect * color, int x, int y);
 void multiSampleDOF(Vect * color, int x, int y);
+int LIndex(int x, int y, int m, int n);
+int LIndex(int x, int y, int m, int n, int o, int q);
 void monteCarlo();
 Vect* monteCarlo2(float x, float y, std::vector<Vect*> &monte, int a, int b, int depth);
 bool checkThreshold(Vect*, Vect*, Vect*, Vect*);
