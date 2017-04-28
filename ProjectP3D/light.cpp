@@ -1,5 +1,4 @@
 #include "Light.h"
-#include <iostream>
 
 #define EPSILON 1e-3
 #define RAND rand() % (NUMEROAMOSTRAS * NUMEROAMOSTRAS)
@@ -138,4 +137,16 @@ Vect * Light::positionSoft(int n, int m) {
 	delete b;
 	return result;
 }
+
+void Light::shuffleArray(int resx, int resy) {
+	std::vector<Vect*>::iterator itb = _lightArray.begin();
+	std::vector<Vect*>::iterator ite = _lightArray.end();
+	int indexa = 0;
+	int step = NUMEROAMOSTRAS * NUMEROAMOSTRAS;
+	for (int i = 0; i < resx*resy; i++) {
+		for (int j = 0; j < NUMEROAMOSTRAS * NUMEROAMOSTRAS; j++) {
+			std::swap(_lightArray[indexa + j], _lightArray[indexa + RAND]);
+		}
+		indexa += step;
+	}
 }
