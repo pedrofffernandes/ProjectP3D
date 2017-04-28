@@ -30,5 +30,6 @@ public:
 	Vect * getLVectArrays(Vect * hit, int index);
 	void buildArray(int resx, int resy);
 	void buildArrayDOF(int resx, int resy);
+	Vect * positionSoft(int n, int m);
 };
 

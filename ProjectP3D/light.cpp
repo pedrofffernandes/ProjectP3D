@@ -33,8 +33,7 @@ Vect * Light::getLVect(Vect * hit) {
 	return result;
 }
 
-Vect * Light::getLVectSoft(Vect * hit)
-{
+Vect * Light::getLVectSoft(Vect * hit) {
 	Vect * result = new Vect(_position);
 	Vect * a = new Vect(_a);
 	Vect * b = new Vect(_b);
@@ -129,4 +128,14 @@ void Light::buildArrayDOF(int resx, int resy) {
 	}
 }
 
+Vect * Light::positionSoft(int n, int m) {
+	Vect * result = new Vect(_position);
+	Vect * a = new Vect(_a);
+	Vect * b = new Vect(_b);
+	result->add(a->multiply((n + ERAND) / NUMEROAMOSTRAS));
+	result->add(b->multiply((m + ERAND) / NUMEROAMOSTRAS));
+	delete a;
+	delete b;
+	return result;
+}
 }
