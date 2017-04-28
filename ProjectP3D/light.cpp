@@ -2,14 +2,15 @@
 #include <iostream>
 
 #define EPSILON 1e-3
+#define RAND rand() % (NUMEROAMOSTRAS * NUMEROAMOSTRAS)
 
-
-Light::Light(Vect* position, Vect* rgb)
+Light::Light(Vect* position, Vect* rgb, int resx, int resy)
 {
 	_position = position;
 	_rgb = rgb;
 	_a = new Vect(1, 0, 0);
 	_b = new Vect(0, 1, 0);
+	if(USE_ARRAY_SOFTSHADOWS) buildArray(resx, resy);
 }
 
 

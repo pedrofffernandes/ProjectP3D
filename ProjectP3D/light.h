@@ -3,6 +3,7 @@
 #include "Material.h"
 #include "Constants.h"
 #include <random>
+#include <algorithm>
 #define ERAND (float)rand()/RAND_MAX
 
 
@@ -15,9 +16,11 @@ class Light
 	//Soft Shadows light edge b
 	Vect* _b;
 
+	std::vector<Vect*> _lightArray;
+
 
 public:
-	Light(Vect* position, Vect* rgb);
+	Light(Vect* position, Vect* rgb, int resx, int resy);
 	~Light();
 	void setColor(Vect * rgb);
 	Vect * getLVect(Vect * hit);

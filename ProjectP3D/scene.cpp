@@ -220,7 +220,9 @@ void Scene::parseLight(FILE *file)
 	{
 		Vect * position = new Vect(lx, ly, lz);
 		Vect * color = new Vect(1.0, 1.0, 1.0);
-		Light * light = new Light(position, color);
+		int resx = this->getCamera()->getResX();
+		int resy = this->getCamera()->getResY();
+		Light * light = new Light(position, color, resx, resy);
 		this->_lights.push_back(light);
 		return;
 
@@ -233,7 +235,9 @@ void Scene::parseLight(FILE *file)
 
 	Vect * position = new Vect(lx, ly, lz);
 	Vect * color = new Vect(lr, lg, lb);
-	Light * light = new Light(position, color);
+	int resx = this->getCamera()->getResX();
+	int resy = this->getCamera()->getResY();
+	Light * light = new Light(position, color, resx, resy);
 	this->_lights.push_back(light);
 }
 
