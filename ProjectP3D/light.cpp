@@ -88,3 +88,45 @@ Vect * Light::getLVectArrays(Vect * hit, int index) {
 	result->normalize();
 	return result;
 }
+
+void Light::buildArray(int resx, int resy) {
+	_lightArray.reserve(resx * resy * NUMEROAMOSTRAS * NUMEROAMOSTRAS);
+
+	for (int y = 0; y < resy; y++) {
+		for (int x = 0; x < resx; x++) {
+
+			for (int n = 0; n < NUMEROAMOSTRAS; n++) {
+				for (int m = 0; m < NUMEROAMOSTRAS; m++) {
+					_lightArray.push_back(positionSoft(n, m));
+				}
+			}
+		}
+	}
+	shuffleArray(resx, resy);
+}
+
+void Light::buildArrayDOF(int resx, int resy) {
+	_lightArray.reserve(resx * resy * NUMEROAMOSTRAS * NUMEROAMOSTRAS * NUMEROAMOSTRAS_DOF * NUMEROAMOSTRAS_DOF);
+	std::vector<Vect*>::iterator itb = _lightArray.begin();
+	std::vector<Vect*>::iterator ite = _lightArray.end();
+	for (int y = 0; y < resy; y++) {
+		for (int x = 0; x < resx; x++) {
+
+			for (int n = 0; n < NUMEROAMOSTRAS; n++) {
+				for (int m = 0; m < NUMEROAMOSTRAS; m++) {
+
+					for (int o = 0; o < NUMEROAMOSTRAS_DOF; o++) {
+						for (int q = 0; q < NUMEROAMOSTRAS_DOF; q++) {
+							//_lightArray.push_back(positionSoft(int p, int q));			//FIXME
+							ite++;
+						}
+					}
+					std::random_shuffle(itb, ite);
+					itb = ite;
+				}
+			}
+		}
+	}
+}
+
+}

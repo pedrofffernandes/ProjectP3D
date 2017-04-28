@@ -28,5 +28,7 @@ public:
 	Vect * getDiffuse(Vect* normal, Vect* L, Material* mat);
 	Vect * getSpecular(Vect* normal, Vect* L, Material* mat, Vect* v);
 	Vect * getLVectArrays(Vect * hit, int index);
+	void buildArray(int resx, int resy);
+	void buildArrayDOF(int resx, int resy);
 };
 
