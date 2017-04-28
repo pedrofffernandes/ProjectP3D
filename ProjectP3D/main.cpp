@@ -49,7 +49,8 @@ void multiSample(Vect * color, int x, int y) {
 	for (int n = 0; n < NUMEROAMOSTRAS; n++) {
 		for (int m = 0; m < NUMEROAMOSTRAS; m++) {
 			Ray * ray = scene->getCamera()->PrimaryRay(x + ((n + ERAND) / NUMEROAMOSTRAS), y + ((m + ERAND) / NUMEROAMOSTRAS));
-			Vect * sample = rayTracing(ray, 1, IOR);
+			int index = LIndex(x, y, n, m);
+			Vect * sample = rayTracing(ray, 1, IOR, index);
 			color->add(sample); //depth=1, ior=1.0
 			delete ray;
 			delete sample;
@@ -66,7 +67,8 @@ void multiSampleDOF(Vect * color, int x, int y) {
 			for (int o = 0; o < NUMEROAMOSTRAS; o++) {
 				for (int q = 0; q < NUMEROAMOSTRAS; q++) {
 					Ray * ray = scene->getCamera()->PrimaryRayDOF(focalp);
-					Vect * sample = rayTracing(ray, 1, IOR);
+					int index = LIndex(x, y, n, m, o, q);
+					Vect * sample = rayTracing(ray, 1, IOR, index);
 					color->add(sample); //depth=1, ior=1.0
 					delete ray;
 					delete sample;
@@ -79,13 +81,6 @@ void multiSampleDOF(Vect * color, int x, int y) {
 	color->multiply((float)1 / (NUMEROAMOSTRAS*NUMEROAMOSTRAS));
 }
 
-void monteCarlo() {
-	/*
-	std::list<Vect*> newColors;
-	std::list<Vect*> oldColors;
-	std::list<Vect*>::iterator newColor;
-	std::list<Vect*>::iterator oldColor;
-	*/
 int LIndex(int x, int y, int m, int n) {
 	return n + m * NUMEROAMOSTRAS + ((NUMEROAMOSTRAS > 1) ? x * RES_X : x )+ y * RES_Y;
 }
@@ -94,8 +89,7 @@ int LIndex(int x, int y, int m, int n, int o, int q) {
 	return q + o * NUMEROAMOSTRAS_DOF + n * NUMEROAMOSTRAS + m * NUMEROAMOSTRAS + x * RES_X + y * RES_Y;
 }
 
-	/*vect * newColors = (Vect*) malloc(sizeof(Vect*) * RES_X);
-	vect * oldColors = (Vect*) malloc(sizeof(Vect*) * RES_X);*/
+void monteCarlo() {
 
 	std::vector<Vect*> newColors(RES_X + 1);
 	std::vector<Vect*> oldColors(RES_X + 1);
@@ -103,19 +97,18 @@ int LIndex(int x, int y, int m, int n, int o, int q) {
 	int y = 0;
 	for (int x = 0; x < RES_X + 1; x++) {					
 		Ray * ray = scene->getCamera()->PrimaryRay(x / NUMEROAMOSTRAS, y / NUMEROAMOSTRAS);
-		oldColors[x] = rayTracing(ray, 1, IOR);
-		//oldColors.push_back(rayTracing(ray, 1, IOR));							
+		oldColors[x] = rayTracing(ray, 1, IOR, 0);					
 	}
 
 	for (y = 1; y < RES_Y + 1; y++) {
 		int x = 0;
 		Ray * ray = scene->getCamera()->PrimaryRay(x / NUMEROAMOSTRAS, y / NUMEROAMOSTRAS);
-		newColors[x] = rayTracing(ray, 1, IOR);
+		newColors[x] = rayTracing(ray, 1, IOR, 0);
 
 		glBegin(GL_POINTS);
 		for (int x = 1; x < RES_X + 1; x++) {
 			Ray * ray = scene->getCamera()->PrimaryRay(x / NUMEROAMOSTRAS, y / NUMEROAMOSTRAS);
-			newColors[x] = rayTracing(ray, 1, IOR);
+			newColors[x] = rayTracing(ray, 1, IOR, 0);
 
 			std::vector<Vect*> monte(SIZE_MONTECARLO * SIZE_MONTECARLO);
 			//for (int i = 0; i < SIZE_MONTECARLO * SIZE_MONTECARLO; i++) monte[i] = nullptr;
@@ -157,7 +150,7 @@ Vect* monteCarlo2(float x, float y, std::vector<Vect*> &monte, int a, int b, int
 	int index = (a * SIZE_MONTECARLO) + b;
 	if (monte[index] == nullptr) {
 		Ray * ray = scene->getCamera()->PrimaryRay(x, y);
-		c1 = rayTracing(ray, 1, IOR);
+		c1 = rayTracing(ray, 1, IOR, 0);
 		monte[index] = c1;
 		delete ray;
 	} else { c1 = monte[index]; }
@@ -166,7 +159,7 @@ Vect* monteCarlo2(float x, float y, std::vector<Vect*> &monte, int a, int b, int
 	index = (a * SIZE_MONTECARLO) + b + step;
 	if (monte[index] == nullptr) {
 		Ray * ray = scene->getCamera()->PrimaryRay((x - (1 / depth)), y);
-		c2 = rayTracing(ray, 1, IOR);
+		c2 = rayTracing(ray, 1, IOR, 0);
 		monte[index] = c2;
 		delete ray;
 	} else { c2 = monte[index]; }
@@ -175,7 +168,7 @@ Vect* monteCarlo2(float x, float y, std::vector<Vect*> &monte, int a, int b, int
 	index = ((a + step) * SIZE_MONTECARLO) + b;
 	if (monte[index] == nullptr) {
 		Ray * ray = scene->getCamera()->PrimaryRay(x, (y - (1 / depth)));
-		c3 = rayTracing(ray, 1, IOR);
+		c3 = rayTracing(ray, 1, IOR, 0);
 		monte[index] = c3;
 		delete ray;
 	} else { c3 = monte[index]; }
@@ -184,7 +177,7 @@ Vect* monteCarlo2(float x, float y, std::vector<Vect*> &monte, int a, int b, int
 	index = ((a + step) * SIZE_MONTECARLO) + b + step;
 	if (monte[index] == nullptr) {
 		Ray * ray = scene->getCamera()->PrimaryRay((x - (1 / depth)), (y - (1 / depth)));
-		c4 = rayTracing(ray, 1, IOR);
+		c4 = rayTracing(ray, 1, IOR, 0);
 		monte[index] = c4;
 		delete ray;
 	} else { c4 = monte[index]; }
@@ -199,14 +192,11 @@ Vect* monteCarlo2(float x, float y, std::vector<Vect*> &monte, int a, int b, int
 		c4 = monteCarlo2((x - (1 / depth)), (y - (1 / depth)), monte, a + (DEPTH_MONTECARLO / depth), b + (DEPTH_MONTECARLO / depth), depth);
 	}
 	c1->monteAdd(c2, c3, c4);
-	//delete c2;
-	//delete c3;
-	//delete c4;
 	return c1;
 }
 
 
-Vect * rayTracing(Ray * ray, int depth, float ior) {
+Vect * rayTracing(Ray * ray, int depth, float ior, int index) {
 	std::list<Obj*> objs = scene->getObjects();
 	std::list<Obj*>::iterator itO;
 
@@ -229,10 +219,17 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 	Vect* hit = ray->getHitPoint(dist);
 	Vect* color = new Vect();
 	Vect* normal = closest->getNormal(hit);
-
+	Vect * lightD;
 	//Local ilumination
 	for (itL = lights.begin(); itL != lights.end(); itL++) {			//Iterates over all the lights
-		Vect * lightD = (USE_SOFTSHADOWS) ? ((Light*)*itL)->getLVectSoft(hit) : ((Light*)*itL)->getLVect(hit);
+		if (USE_SOFTSHADOWS) {
+			lightD = ((Light*)*itL)->getLVectSoft(hit);
+		} else if (USE_ARRAY_SOFTSHADOWS) {
+			lightD = ((Light*)*itL)->getLVectArrays(hit, index);
+		} else { 
+			lightD = ((Light*)*itL)->getLVect(hit); 
+		}
+
 		
 
 		if(lightD->dotP(normal) > 0) {										//If surface faces light
@@ -273,7 +270,7 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 		Vect * newO = new Vect(hit);
 		Vect * newD = new Vect(I);
 		Ray * reflectRay = new Ray(newO->add(newD->multiply(EPSILON)), I);	//Create reflection ray
-		Vect * reflectColor = rayTracing(reflectRay, depth + 1, ior);		//Compute reflection color
+		Vect * reflectColor = rayTracing(reflectRay, depth + 1, ior, index);		//Compute reflection color
 		reflectColor->multiply(closest->getMat()->getKs());					//Multiply by intensity
 		color->add(reflectColor);											//Add color to pixel color
 		delete V;
@@ -312,7 +309,7 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 			Vect * newO = new Vect(hit);
 			Vect * newD = new Vect(I);
 			Ray * refractRay = new Ray(newO->add(newD->multiply(EPSILON)), I);	//Create refraction ray
-			Vect * refractColor = rayTracing(refractRay, depth + 1, ior);		//Compute refraction color
+			Vect * refractColor = rayTracing(refractRay, depth + 1, ior, index);		//Compute refraction color
 			refractColor->multiply(closest->getMat()->getT());					//Multiply by intensity
 			color->add(refractColor);											//Add refraction color to pixel
 			delete I;
