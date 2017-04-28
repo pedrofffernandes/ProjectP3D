@@ -81,3 +81,10 @@ Vect * Light::getSpecular(Vect * normal, Vect * L, Material * mat, Vect* v)
 	delete V;
 	return result;
 }
+
+Vect * Light::getLVectArrays(Vect * hit, int index) {
+	Vect * result = new Vect(_lightArray[index]);
+	result->minus(hit);
+	result->normalize();
+	return result;
+}

@@ -27,5 +27,6 @@ public:
 	Vect * getLVectSoft(Vect * hit);
 	Vect * getDiffuse(Vect* normal, Vect* L, Material* mat);
 	Vect * getSpecular(Vect* normal, Vect* L, Material* mat, Vect* v);
+	Vect * getLVectArrays(Vect * hit, int index);
 };
 
