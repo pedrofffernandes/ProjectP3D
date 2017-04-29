@@ -1,7 +1,7 @@
 #include "Light.h"
 
 #define EPSILON 1e-3
-#define RAND rand() % (NUMEROAMOSTRAS * NUMEROAMOSTRAS)
+#define RAND4 (int)rand() % (NUMEROAMOSTRAS * NUMEROAMOSTRAS)
 
 Light::Light(Vect* position, Vect* rgb, int resx, int resy)
 {
@@ -131,21 +131,20 @@ Vect * Light::positionSoft(int n, int m) {
 	Vect * result = new Vect(_position);
 	Vect * a = new Vect(_a);
 	Vect * b = new Vect(_b);
-	result->add(a->multiply((n + ERAND) / NUMEROAMOSTRAS));
-	result->add(b->multiply((m + ERAND) / NUMEROAMOSTRAS));
+	result->add(a->multiply(((n + (ERAND / NUMEROAMOSTRAS)) / NUMEROAMOSTRAS)));
+	result->add(b->multiply(((m + (ERAND / NUMEROAMOSTRAS)) / NUMEROAMOSTRAS)));
 	delete a;
 	delete b;
 	return result;
 }
 
 void Light::shuffleArray(int resx, int resy) {
-	std::vector<Vect*>::iterator itb = _lightArray.begin();
-	std::vector<Vect*>::iterator ite = _lightArray.end();
 	int indexa = 0;
 	int step = NUMEROAMOSTRAS * NUMEROAMOSTRAS;
 	for (int i = 0; i < resx*resy; i++) {
 		for (int j = 0; j < NUMEROAMOSTRAS * NUMEROAMOSTRAS; j++) {
-			std::swap(_lightArray[indexa + j], _lightArray[indexa + RAND]);
+			int r = RAND4;
+			std::swap(_lightArray[indexa + j], _lightArray[indexa + r]);
 		}
 		indexa += step;
 	}
