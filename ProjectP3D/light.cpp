@@ -116,7 +116,7 @@ void Light::buildArrayDOF(int resx, int resy) {
 
 					for (int o = 0; o < NUMEROAMOSTRAS_DOF; o++) {
 						for (int q = 0; q < NUMEROAMOSTRAS_DOF; q++) {
-							//_lightArray.push_back(positionSoft(int p, int q));			//FIXME
+							_lightArray.push_back(positionSoft(o,q));			//FIXME
 							ite++;
 						}
 					}
