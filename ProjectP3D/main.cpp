@@ -82,7 +82,7 @@ void multiSampleDOF(Vect * color, int x, int y) {
 }
 
 int LIndex(int x, int y, int m, int n) {
-	return n + m * NUMEROAMOSTRAS + ((NUMEROAMOSTRAS > 1) ? x * RES_X : x )+ y * RES_Y;
+	return n + m * NUMEROAMOSTRAS + x * (NUMEROAMOSTRAS * NUMEROAMOSTRAS) + y * (NUMEROAMOSTRAS * NUMEROAMOSTRAS * RES_X);
 }
 
 int LIndex(int x, int y, int m, int n, int o, int q) {
@@ -328,6 +328,7 @@ Vect * rayTracing(Ray * ray, int depth, float ior, int index) {
 
 int main(int argc, char**argv)
 {
+	srand((unsigned)time(NULL));
 	scene = new Scene();
 	if (!(scene->load_nff("test_scenes/balls_low.nff"))) return 0;
 	
