@@ -80,7 +80,7 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 	std::list<Obj*>::iterator itO;
 
 	Obj* closest = nullptr;									//the closest object to the camera that the ray hits
-
+	/*
 	float dist = 9999, distNew = 0;
 	for (itO = objs.begin(); itO != objs.end(); itO++) {	//Iterates over all objects
 		distNew = ((Obj*)*itO)->intersect(ray);				//Intersect returns distance from hitpoint to camera
@@ -89,13 +89,35 @@ Vect * rayTracing(Ray * ray, int depth, float ior) {
 			closest = (Obj*)*itO;
 		}		
 	}
+	*/
+
+
+	intersection * i = scene->getGrid()->traverse(ray);
+	float dist = HUGE_VALUE;
+	Vect * hit = nullptr;
+	/// Check if there is an intersection with the objects in the grid
+	if (i == nullptr) {
+		/// Check if the plane is intersected 
+		float distance_aux = scene->getPlane()->intersect(ray);
+		if (distance_aux > EPSILON && distance_aux < dist) {
+			dist = distance_aux;
+			closest = (Obj*) scene->getPlane();
+			hit = ray->getHitPoint(dist);
+		} else 
+			return new Vect(scene->getBackground());
+	}
+	else {
+		closest = i->object;
+		dist = i->distance;
+		hit = i->hitpoint;
+	}	
 	if (closest == nullptr)									//If the ray doesn't intersect any object
 		return new Vect(scene->getBackground());						
-
+	
 
 	std::list<Light*> lights = scene->getLights();
 	std::list<Light*>::iterator itL;
-	Vect* hit = ray->getHitPoint(dist);
+	//Vect* hit = ray->getHitPoint(dist);
 	Vect* color = new Vect();
 	Vect* normal = closest->getNormal(hit);
 
@@ -206,8 +228,9 @@ int main(int argc, char**argv)
 	RES_X = scene->getCamera()->getResX();
 	RES_Y = scene->getCamera()->getResY();
 	printf("resx = %d resy= %d.\n", RES_X, RES_Y);
+	scene->initGrid();
 
-
+	
 	if (USE_OPEN_GL) {
 		glutInit(&argc, argv);
 		glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA);

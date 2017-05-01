@@ -4,11 +4,13 @@
 
 Grid::Grid()
 {
+	_bbox = nullptr;
 }
 
 
 Grid::~Grid()
 {
+	delete _bbox;
 }
 
 void Grid::setup(std::list<Obj*> objects)
@@ -22,7 +24,7 @@ void Grid::setup(std::list<Obj*> objects)
 	float max_point_Z = -HUGE_VALUE;
 
 	int num_objects = objects.size();
-
+	
 	for (std::list<Obj*>::iterator it = objects.begin(); it != objects.end(); it++) {
 		bbox = ((Obj*)*it)->get_bounding_box();
 		/// Bounding box minimum coordinate
@@ -33,15 +35,15 @@ void Grid::setup(std::list<Obj*> objects)
 		if (bbox->getMinZ() < min_point_Z)
 			min_point_Z = bbox->getMinZ();
 
-		/// Bounding box miximum coordinate
-		if (bbox->getMaxX() < max_point_X)
+		/// Bounding box maximum coordinate
+		if (bbox->getMaxX() > max_point_X)
 			max_point_X = bbox->getMaxX();
-		if (bbox->getMaxY() < max_point_Y)
+		if (bbox->getMaxY() > max_point_Y)
 			max_point_Y = bbox->getMaxY();
-		if (bbox->getMaxZ() < max_point_Z)
+		if (bbox->getMaxZ() > max_point_Z)
 			max_point_Z = bbox->getMaxZ();
 	}
-
+	
 	/// Taking the error margin into account
 	min_point_X -= (float) EPSILON;	min_point_Y -= (float) EPSILON;	min_point_Z -= (float) EPSILON;
 	max_point_X += (float) EPSILON;	max_point_Y += (float) EPSILON;	max_point_Z += (float) EPSILON;
@@ -64,13 +66,13 @@ void Grid::setup(std::list<Obj*> objects)
 	_Nz = static_cast<int> (ceil(M*wz / s));
 
 	int cells_size = _Nx*_Ny*_Nz;
-
+	
 	/// inicializacao das celulas da grip a empty
 	/// isto para depois se poder aceder a elas
 	for (int i = 0; i < cells_size;i++) {
-		_cells->push_back(dynamic_cast<Cell*>(new Cell()));
+		_cells.push_back(dynamic_cast<Cell*>(new Cell()));
 	}
-
+	
 	// Store the objects in the cells
 	for (std::list<Obj*>::iterator it = objects.begin(); it != objects.end(); it++) {
 		/// Compute indices of both cells that contain min and max coord of obj bbox
@@ -87,17 +89,18 @@ void Grid::setup(std::list<Obj*> objects)
 			for (int iy = iymin; iy <= iymax; iy++) {
 				for (int ix = ixmin; ix <= ixmax; ix++) {
 					unsigned int index = ix + _Nx*iy + _Nx*_Ny*iz;
-					_cells->at(index)->push((Obj*)*it);
+					_cells.at(index)->push((Obj*)*it);
 				}
 			}
 		}
-
+		
+		
 	}
 	/// Delete pointers
 	delete min_point;
 	delete max_point;
 	delete bbox;
-
+	
 	
 }
 limit * Grid::kkAlgorithmn(Ray * r)
@@ -149,7 +152,7 @@ limit * Grid::kkAlgorithmn(Ray * r)
 		tmin = (Vmin - Vo) / Vd;
 		tmax = (Vmax - Vo) / Vd;
 		/// switch values if tmin < tmax
-		if (tmin < tmax) {
+		if (tmin > tmax) {
 			float aux = tmin;
 			tmin = tmax;
 			tmax = aux;
@@ -174,7 +177,7 @@ limit * Grid::kkAlgorithmn(Ray * r)
 	float max_y = r->getO()->getY() + (tfar * r->getD()->getY());
 	float max_z = r->getO()->getZ() + (tfar * r->getD()->getZ());
 
-	limit * l;
+	limit * l = new limit();
 	l->min = new Vect(min_x, min_y, min_z);
 	l->max = new Vect(max_x, max_y, max_z);
 
@@ -202,14 +205,15 @@ intersection * Grid::traverse(Ray * ray)
 	float max_x = _bbox->getMaxX();
 	float max_y = _bbox->getMaxY();
 	float max_z = _bbox->getMaxZ();
+	
 	/// First intersection point coordinates
-	float tmin_x = l->min->getX();
-	float tmin_y = l->min->getY();
-	float tmin_z = l->min->getZ();
+	float tmin_x = abs(l->min->getX() - ray->getO()->getX()); // ERRO
+	float tmin_y = abs(l->min->getY() - ray->getO()->getY()); // ERRO
+	float tmin_z = abs(l->min->getZ() - ray->getO()->getZ()); // ERRO
 	/// Second intersection point coordinates
-	float tmax_x = l->max->getX();
-	float tmax_y = l->max->getY();
-	float tmax_z = l->max->getZ();
+	float tmax_x = abs(l->max->getX() - ray->getO()->getX()); // ERRO
+	float tmax_y = abs(l->max->getY() - ray->getO()->getY()); // ERRO
+	float tmax_z = abs(l->max->getZ() - ray->getO()->getZ()); // ERRO
 	/// Check if the ray comes from inside the GRID
 	if (_bbox->inside(ray->getO())) {
 		ix = clamp((ox - min_x) * _Nx / (max_x - min_x), 0, _Nx - 1);
@@ -242,5 +246,94 @@ intersection * Grid::traverse(Ray * ray)
 	istep_z = +1;
 	istop_z = _Nz;
 
+	// Grid Traversal Loop
+	while (true) {
+		/// Get Cell at current index
+		Cell * cell_ptr = _cells.at(indexOfCell(ix, iy, iz));
+
+		/// Check which cell will the ray traverse next (in x, y or z)
+		if (tnext_x < tnext_y && tnext_x < tnext_z) {
+			// ray will traverse in X
+			/// IF the cell is NOT empty
+			if (!cell_ptr->isEmpty()) {
+				/// Compute the intersection
+				intersection * i = cell_ptr->hit(ray);
+				/// compute the distance in X to the intersection point
+				float t = abs(i->hitpoint->getX() - ray->getO()->getX());  // ERRO
+				/// check if the ray intersected an object and its
+				/// on the same cell of the intersection
+				if (i->object != nullptr && t < tnext_x) {  // ERRO
+					/// if it is, then its the object we wanted
+					return i;
+				}
+				delete i;
+			}
+			/// ELSE it will advance to the next cell
+			tnext_x += dtx;
+			ix += istep_x;
+			/// IF it reached the last cell
+			if (ix == istop_x)
+				/// return NO INTERSECTION
+				return nullptr;
+
+		}
+		else {
+			if (tnext_y < tnext_z) {
+				// ray will traverse in Y
+				/// IF the cell is NOT empty
+				if (!cell_ptr->isEmpty()) {
+					/// Compute the intersection
+					intersection * i = cell_ptr->hit(ray);
+					/// compute the distance in Y to the intersection point
+					float t = abs(i->hitpoint->getY() - ray->getO()->getY()); // ERRO
+					/// check if the ray intersected an object and its
+					/// on the same cell of the intersection
+					if (i->object != nullptr && t < tnext_y) { // ERRO
+						/// if it is, then its the object we wanted
+						return i;
+					}
+					delete i;
+				}
+				/// ELSE it will advance to the next cell
+				tnext_y += dty;
+				iy += istep_y;
+				/// IF it reached the last cell
+				if (iy == istop_y)
+					/// return NO INTERSECTION
+					return nullptr;
+			}
+			else {
+				// ray will traverse in Z
+				/// IF the cell is NOT empty
+				if (!cell_ptr->isEmpty()) {
+					/// Compute the intersection
+					intersection * i = cell_ptr->hit(ray);
+					/// compute the distance in Z to the intersection point
+					float t = abs(i->hitpoint->getZ() - ray->getO()->getZ()); // ERRO
+					/// check if the ray intersected an object and its
+					/// on the same cell of the intersection
+					if (i->object != nullptr && t < tnext_z) { // ERRO
+						/// if it is, then its the object we wanted
+						return i;
+					}
+					delete i;
+				}
+				/// ELSE it will advance to the next cell
+				tnext_z += dtz;
+				iz += istep_z;
+				/// IF it reached the last cell
+				if (iz == istop_z)
+					/// return NO INTERSECTION
+					return nullptr;
+			}
+		}
+	}
+	
+	/// It wont reach this state
 	return nullptr;
+}
+
+unsigned int Grid::indexOfCell(int ix, int iy, int iz)
+{
+	return ix + (_Nx*iy) + (_Nx*_Ny*iz);
 }

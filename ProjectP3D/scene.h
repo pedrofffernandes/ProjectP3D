@@ -16,6 +16,9 @@
 #include "Vect.h"
 #include "Triangle.h"
 #include "Constants.h"
+#include "Grid.h"
+
+
 
 class Scene {
 	std::list<Light*> _lights;
@@ -23,6 +26,8 @@ class Scene {
 
 	Camera * _camera;
 	Vect * _background;
+	Grid * _grid;
+	Plane * _plane;
 
 public:
 	Scene();
@@ -46,4 +51,7 @@ public:
 	void Scene::parseTriangle(FILE * file);
 	//void Scene::parseBigPoly(FILE * file, int d);
 	void Scene::parsePlane(FILE * file);
+	void Scene::initGrid() { _grid = new Grid(); _grid->setup(_objects); };
+	Grid * Scene::getGrid() { return _grid; }
+	Obj * getPlane() { return _plane; }
 };

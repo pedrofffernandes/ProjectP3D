@@ -1,7 +1,10 @@
 #pragma once
+#ifndef __GRID_H__
+#define __GRID_H__
+
 // CPP files
 #include <list>
-#include<vector>
+#include <vector>
 // Project Files
 #include "BBox.h"
 #include "obj.h"
@@ -9,8 +12,6 @@
 #include "Constants.h"
 #include "Structs.h"
 #include "AuxFunctions.h"
-
-
 
 class Grid
 {
@@ -20,7 +21,7 @@ class Grid
 	unsigned int _Nx; /// Number of cells in the x axis
 	unsigned int _Ny; /// Number of cells in the y axis
 	unsigned int _Nz; /// Number of cells in the z axis
-	std::vector<Cell*>* _cells; /// structure containning the cells
+	std::vector<Cell*> _cells; /// structure containning the cells
 
 public:
 	Grid();
@@ -29,5 +30,11 @@ public:
 	//Intersection traverse(Ray* ray);
 	limit * kkAlgorithmn(Ray*);
 	intersection * traverse(Ray*);
-
+	unsigned int indexOfCell(int, int, int); /// Returns the index 
+	float clamp(float n, float min, float max) {
+		return n <= min ? min : n >= max ? max : n;
+	}
+	unsigned int numberOfObjects() { return _Nx*_Ny*_Nz / pow(M, 3); }
 };
+
+#endif // !__GRID_H__

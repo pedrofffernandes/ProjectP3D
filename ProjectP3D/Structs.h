@@ -16,8 +16,9 @@ struct limit {
 	Vect * max;
 };
 struct intersection {
-	Vect * hit;
+	float distance;
 	Obj * object;
+	Vect * hitpoint;
 };
 
 #endif // __STRUCTS_H__

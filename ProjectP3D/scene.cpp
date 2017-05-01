@@ -411,5 +411,6 @@ void Scene::parsePlane(FILE * file) {
 	}
 	Vect * p3 = new Vect(x, y, z);
 	Plane * plane = new Plane(p1, p2, p3, mat);
+	_plane = plane;
 	this->addObject(plane);
 }
