@@ -29,6 +29,8 @@ int LIndex(int x, int y, int m, int n);
 int LIndex(int x, int y, int m, int n, int o, int q);
 void monteCarlo();
 Vect* monteCarlo2(float x, float y, std::vector<Vect*> &monte, int a, int b, int depth);
+void monteCarloDOF();
+Vect* monteCarlo2DOF(float x, float y, std::vector<Vect*> &monte, int a, int b, int depth);
 bool checkThreshold(Vect*, Vect*, Vect*, Vect*);
 bool inShadow(Ray* ray);
 void drawScene_withoutOPENGL(Scene);

@@ -11,11 +11,7 @@ Light::Light(Vect* position, Vect* rgb, int resx, int resy)
 	_a = new Vect(LIGHT_SIZE, 0, 0);
 	_b = new Vect(0, LIGHT_SIZE, 0);
 	if (USE_ARRAY_SOFTSHADOWS) {
-		if (USE_DOF) {
-			buildArrayDOF(resx, resy);
-		} else {
-			buildArray(resx, resy);
-		}
+		buildArray(resx, resy);
 	}
 }
 
@@ -95,37 +91,14 @@ Vect * Light::getLVectArrays(Vect * hit, int index) {
 }
 
 void Light::buildArray(int resx, int resy) {
-	_lightArray.reserve(resx * resy * NUMEROAMOSTRAS * NUMEROAMOSTRAS);
-
-	for (int y = 0; y < resy; y++) {
-		for (int x = 0; x < resx; x++) {
-
-			for (int n = 0; n < NUMEROAMOSTRAS; n++) {
-				for (int m = 0; m < NUMEROAMOSTRAS; m++) {
-					_lightArray.push_back(positionSoft(n, m));
-				}
-			}
-		}
-	}
-	int step = NUMEROAMOSTRAS * NUMEROAMOSTRAS;
-	shuffleArray(resx, resy, step);
-}
-
-void Light::buildArrayDOF(int resx, int resy) {
 	_lightArray.reserve(resx * resy * NUMEROAMOSTRAS * NUMEROAMOSTRAS * NUMEROAMOSTRAS_DOF * NUMEROAMOSTRAS_DOF);
-	std::vector<Vect*>::iterator itb = _lightArray.begin();
-	std::vector<Vect*>::iterator ite = _lightArray.end();
+	
 	for (int y = 0; y < resy; y++) {
 		for (int x = 0; x < resx; x++) {
 
-			for (int n = 0; n < NUMEROAMOSTRAS; n++) {
-				for (int m = 0; m < NUMEROAMOSTRAS; m++) {
-
-					for (int o = 0; o < NUMEROAMOSTRAS_DOF; o++) {
-						for (int q = 0; q < NUMEROAMOSTRAS_DOF; q++) {
-							_lightArray.push_back(positionSoft(o,q));			//FIXME
-						}
-					}
+			for (int n = 0; n < NUMEROAMOSTRAS * NUMEROAMOSTRAS_DOF; n++) {
+				for (int m = 0; m < NUMEROAMOSTRAS * NUMEROAMOSTRAS_DOF; m++) {
+					_lightArray.push_back(positionSoft(n, m));
 				}
 			}
 		}
@@ -138,8 +111,8 @@ Vect * Light::positionSoft(int n, int m) {
 	Vect * result = new Vect(_position);
 	Vect * a = new Vect(_a);
 	Vect * b = new Vect(_b);
-	result->add(a->multiply(((n + (ERAND / NUMEROAMOSTRAS)) / NUMEROAMOSTRAS)));
-	result->add(b->multiply(((m + (ERAND / NUMEROAMOSTRAS)) / NUMEROAMOSTRAS)));
+	result->add(a->multiply(((n + (ERAND / NUMEROAMOSTRAS * NUMEROAMOSTRAS_DOF)) / (NUMEROAMOSTRAS * NUMEROAMOSTRAS_DOF))));
+	result->add(b->multiply(((m + (ERAND / NUMEROAMOSTRAS * NUMEROAMOSTRAS_DOF)) / (NUMEROAMOSTRAS * NUMEROAMOSTRAS_DOF))));
 	delete a;
 	delete b;
 	return result;

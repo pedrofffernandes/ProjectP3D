@@ -1,8 +1,7 @@
 #include "Header.h"
 #include <stdlib.h>
 
-void reshape(int w, int h)
-{
+void reshape(int w, int h) {
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glViewport(0, 0, w, h);
@@ -15,8 +14,7 @@ void reshape(int w, int h)
 
 // Draw function by primary ray casting from the eye towards the scene's objects
 
-void drawScene()
-{	
+void drawScene() {	
 	INIT_TIMER
 	START_TIMER
 	if (USE_MONTECARLO) {
@@ -48,7 +46,7 @@ void multiSample(Vect * color, int x, int y) {
 
 	for (int n = 0; n < NUMEROAMOSTRAS; n++) {
 		for (int m = 0; m < NUMEROAMOSTRAS; m++) {
-			Ray * ray = scene->getCamera()->PrimaryRay(x + ((n + ERAND) / NUMEROAMOSTRAS), y + ((m + ERAND) / NUMEROAMOSTRAS));
+			Ray * ray = scene->getCamera()->PrimaryRay(x + ((n + (ERAND / NUMEROAMOSTRAS)) / NUMEROAMOSTRAS), y + ((m + (ERAND / NUMEROAMOSTRAS)) / NUMEROAMOSTRAS));
 			int index = LIndex(x, y, n, m);
 			Vect * sample = rayTracing(ray, 1, IOR, index);
 			color->add(sample); //depth=1, ior=1.0
@@ -63,9 +61,9 @@ void multiSampleDOF(Vect * color, int x, int y) {
 
 	for (int n = 0; n < NUMEROAMOSTRAS; n++) {
 		for (int m = 0; m < NUMEROAMOSTRAS; m++) {
-			Vect * focalp = scene->getCamera()->GetFocalPoint(x + ((n + ERAND) / NUMEROAMOSTRAS), y + ((m + ERAND) / NUMEROAMOSTRAS));
-			for (int o = 0; o < NUMEROAMOSTRAS; o++) {
-				for (int q = 0; q < NUMEROAMOSTRAS; q++) {
+			Vect * focalp = scene->getCamera()->GetFocalPoint(x + ((n + (ERAND / NUMEROAMOSTRAS)) / NUMEROAMOSTRAS), y + ((m + (ERAND / NUMEROAMOSTRAS)) / NUMEROAMOSTRAS));
+			for (int o = 0; o < NUMEROAMOSTRAS_DOF; o++) {
+				for (int q = 0; q < NUMEROAMOSTRAS_DOF; q++) {
 					Ray * ray = scene->getCamera()->PrimaryRayDOF(focalp);
 					int index = LIndex(x, y, n, m, o, q);
 					Vect * sample = rayTracing(ray, 1, IOR, index);
@@ -74,11 +72,25 @@ void multiSampleDOF(Vect * color, int x, int y) {
 					delete sample;
 				}
 			}
-			color->multiply((float)1 / (NUMEROAMOSTRAS));
 			delete focalp;
 		}
 	}
-	color->multiply((float)1 / (NUMEROAMOSTRAS*NUMEROAMOSTRAS));
+	color->multiply((float)1 / (NUMEROAMOSTRAS_DOF * NUMEROAMOSTRAS_DOF * NUMEROAMOSTRAS * NUMEROAMOSTRAS));
+}
+
+void castDOF(Vect * color, int x, int y) {
+	Vect * focalp = scene->getCamera()->GetFocalPoint(x, y);
+	for (int o = 0; o < NUMEROAMOSTRAS_DOF; o++) {
+		for (int q = 0; q < NUMEROAMOSTRAS_DOF; q++) {
+			Ray * ray = scene->getCamera()->PrimaryRayDOF(focalp);
+			Vect * sample = rayTracing(ray, 1, IOR, 0);
+			color->add(sample); //depth=1, ior=1.0
+			delete ray;
+			delete sample;
+		}
+	}
+	delete focalp;
+	color->multiply((float)1 / (NUMEROAMOSTRAS_DOF * NUMEROAMOSTRAS_DOF));
 }
 
 int LIndex(int x, int y, int m, int n) {
@@ -95,22 +107,42 @@ void monteCarlo() {
 
 	std::vector<Vect*> newColors(RES_X + 1);
 	std::vector<Vect*> oldColors(RES_X + 1);
+	Ray * ray;
 
 	int y = 0;
 	for (int x = 0; x < RES_X + 1; x++) {					
-		Ray * ray = scene->getCamera()->PrimaryRay(x / NUMEROAMOSTRAS, y / NUMEROAMOSTRAS);
-		oldColors[x] = rayTracing(ray, 1, IOR, 0);					
+		if (USE_DOF) {
+			Vect* color = new Vect();
+			castDOF(color, x, y);
+			oldColors[x] = color;
+		} else {
+			ray = scene->getCamera()->PrimaryRay(x, y);
+			oldColors[x] = rayTracing(ray, 1, IOR, 0);
+		}				
 	}
 
 	for (y = 1; y < RES_Y + 1; y++) {
 		int x = 0;
-		Ray * ray = scene->getCamera()->PrimaryRay(x / NUMEROAMOSTRAS, y / NUMEROAMOSTRAS);
-		newColors[x] = rayTracing(ray, 1, IOR, 0);
+
+		if (USE_DOF) {
+			Vect* color = new Vect();
+			castDOF(color, x, y);
+			newColors[x] = color;
+		} else {
+			ray = scene->getCamera()->PrimaryRay(x, y);
+			newColors[x] = rayTracing(ray, 1, IOR, 0);
+		}
 
 		glBegin(GL_POINTS);
 		for (int x = 1; x < RES_X + 1; x++) {
-			Ray * ray = scene->getCamera()->PrimaryRay(x / NUMEROAMOSTRAS, y / NUMEROAMOSTRAS);
-			newColors[x] = rayTracing(ray, 1, IOR, 0);
+			if (USE_DOF) {
+				Vect* color = new Vect();
+				castDOF(color, x, y);
+				newColors[x] = color;
+			} else {
+				ray = scene->getCamera()->PrimaryRay(x, y);
+				newColors[x] = rayTracing(ray, 1, IOR, 0);
+			}
 
 			std::vector<Vect*> monte(SIZE_MONTECARLO * SIZE_MONTECARLO);
 			//for (int i = 0; i < SIZE_MONTECARLO * SIZE_MONTECARLO; i++) monte[i] = nullptr;
@@ -123,12 +155,10 @@ void monteCarlo() {
 			
 			glColor3f(color->getX(), color->getY(), color->getZ());
 			glVertex2f(x, y);
-			
-			delete ray;
 		}
 		glEnd();
 		glFlush();
-		delete ray;
+		if(!USE_DOF) delete ray;
 		oldColors.swap(newColors);
 	}
 } 
@@ -145,43 +175,68 @@ bool checkThreshold(Vect* sw, Vect* se, Vect* ne, Vect* nw) {
 
 Vect* monteCarlo2(float x, float y, std::vector<Vect*> &monte, int a, int b, int depth) {
 	Vect* c1, *c2, *c3, *c4;	//Colors
+	Ray * ray;
 
 	int step = (DEPTH_MONTECARLO / depth);
 
 	//ne corner
 	int index = (a * SIZE_MONTECARLO) + b;
 	if (monte[index] == nullptr) {
-		Ray * ray = scene->getCamera()->PrimaryRay(x, y);
-		c1 = rayTracing(ray, 1, IOR, 0);
+		if (USE_DOF) {
+			Vect* color = new Vect();
+			castDOF(color, x, y);
+			c1 = color;
+		} else {
+			ray = scene->getCamera()->PrimaryRay(x, y);
+			c1 = rayTracing(ray, 1, IOR, 0);
+			delete ray;
+		}
 		monte[index] = c1;
-		delete ray;
 	} else { c1 = monte[index]; }
 	
 	//nw corner
 	index = (a * SIZE_MONTECARLO) + b + step;
 	if (monte[index] == nullptr) {
-		Ray * ray = scene->getCamera()->PrimaryRay((x - (1 / depth)), y);
-		c2 = rayTracing(ray, 1, IOR, 0);
+		if (USE_DOF) {
+			Vect* color = new Vect();
+			castDOF(color, x, y);
+			c2 = color;
+		} else {
+			ray = scene->getCamera()->PrimaryRay(x, y);
+			c2 = rayTracing(ray, 1, IOR, 0);
+			delete ray;
+		}
 		monte[index] = c2;
-		delete ray;
 	} else { c2 = monte[index]; }
 
 	//se corner
 	index = ((a + step) * SIZE_MONTECARLO) + b;
 	if (monte[index] == nullptr) {
-		Ray * ray = scene->getCamera()->PrimaryRay(x, (y - (1 / depth)));
-		c3 = rayTracing(ray, 1, IOR, 0);
+		if (USE_DOF) {
+			Vect* color = new Vect();
+			castDOF(color, x, y);
+			c3 = color;
+		} else {
+			ray = scene->getCamera()->PrimaryRay(x, y);
+			c3 = rayTracing(ray, 1, IOR, 0);
+			delete ray;
+		}
 		monte[index] = c3;
-		delete ray;
 	} else { c3 = monte[index]; }
 
 	//sw corner
 	index = ((a + step) * SIZE_MONTECARLO) + b + step;
 	if (monte[index] == nullptr) {
-		Ray * ray = scene->getCamera()->PrimaryRay((x - (1 / depth)), (y - (1 / depth)));
-		c4 = rayTracing(ray, 1, IOR, 0);
+		if (USE_DOF) {
+			Vect* color = new Vect();
+			castDOF(color, x, y);
+			c4 = color;
+		} else {
+			ray = scene->getCamera()->PrimaryRay(x, y);
+			c4 = rayTracing(ray, 1, IOR, 0);
+			delete ray;
+		}
 		monte[index] = c4;
-		delete ray;
 	} else { c4 = monte[index]; }
 	
 
@@ -196,6 +251,7 @@ Vect* monteCarlo2(float x, float y, std::vector<Vect*> &monte, int a, int b, int
 	c1->monteAdd(c2, c3, c4);
 	return c1;
 }
+
 
 
 Vect * rayTracing(Ray * ray, int depth, float ior, int index) {
@@ -332,7 +388,7 @@ int main(int argc, char**argv)
 {
 	srand((unsigned)time(NULL));
 	scene = new Scene();
-	if (!(scene->load_nff("test_scenes/balls_low.nff"))) return 0;
+	if (!(scene->load_nff("test_scenes/room2.nff"))) return 0;
 	
 	RES_X = scene->getCamera()->getResX();
 	RES_Y = scene->getCamera()->getResY();

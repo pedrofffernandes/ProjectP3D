@@ -105,4 +105,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="test_scenes\balls_low.nff">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="test_scenes\mount_low.nff">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="test_scenes\room_low.nff">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="test_scenes\room2.nff">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>
