@@ -34,6 +34,6 @@ public:
 	void buildArray(int resx, int resy);
 	void buildArrayDOF(int resx, int resy);
 	Vect * positionSoft(int n, int m);
-	void shuffleArray(int resx, int resy);
+	void shuffleArray(int resx, int resy, int step);
 };
 

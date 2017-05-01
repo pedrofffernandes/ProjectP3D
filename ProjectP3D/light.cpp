@@ -2,7 +2,7 @@
 
 
 #define EPSILON 1e-3
-#define RAND4 (int)rand() % (NUMEROAMOSTRAS * NUMEROAMOSTRAS)
+#define RAND4 (int)rand() % (NUMEROAMOSTRAS * NUMEROAMOSTRAS * NUMEROAMOSTRAS_DOF * NUMEROAMOSTRAS_DOF)
 
 Light::Light(Vect* position, Vect* rgb, int resx, int resy)
 {
@@ -10,7 +10,13 @@ Light::Light(Vect* position, Vect* rgb, int resx, int resy)
 	_rgb = rgb;
 	_a = new Vect(LIGHT_SIZE, 0, 0);
 	_b = new Vect(0, LIGHT_SIZE, 0);
-	if(USE_ARRAY_SOFTSHADOWS) buildArray(resx, resy);
+	if (USE_ARRAY_SOFTSHADOWS) {
+		if (USE_DOF) {
+			buildArrayDOF(resx, resy);
+		} else {
+			buildArray(resx, resy);
+		}
+	}
 }
 
 
@@ -101,7 +107,8 @@ void Light::buildArray(int resx, int resy) {
 			}
 		}
 	}
-	shuffleArray(resx, resy);
+	int step = NUMEROAMOSTRAS * NUMEROAMOSTRAS;
+	shuffleArray(resx, resy, step);
 }
 
 void Light::buildArrayDOF(int resx, int resy) {
@@ -117,15 +124,14 @@ void Light::buildArrayDOF(int resx, int resy) {
 					for (int o = 0; o < NUMEROAMOSTRAS_DOF; o++) {
 						for (int q = 0; q < NUMEROAMOSTRAS_DOF; q++) {
 							_lightArray.push_back(positionSoft(o,q));			//FIXME
-							ite++;
 						}
 					}
-					std::random_shuffle(itb, ite);
-					itb = ite;
 				}
 			}
 		}
 	}
+	int step = NUMEROAMOSTRAS * NUMEROAMOSTRAS * NUMEROAMOSTRAS_DOF * NUMEROAMOSTRAS_DOF;
+	shuffleArray(resx, resy, step);
 }
 
 Vect * Light::positionSoft(int n, int m) {
@@ -139,13 +145,12 @@ Vect * Light::positionSoft(int n, int m) {
 	return result;
 }
 
-void Light::shuffleArray(int resx, int resy) {
+void Light::shuffleArray(int resx, int resy, int step) {
 	int indexa = 0;
-	int step = NUMEROAMOSTRAS * NUMEROAMOSTRAS;
 	for (int i = 0; i < resy; i++) {
 		srand((unsigned) time(NULL));
 		for (int ii = 0; ii < resx; ii++) {
-			for (int j = 0; j < NUMEROAMOSTRAS * NUMEROAMOSTRAS; j++) {
+			for (int j = 0; j < step; j++) {
 				int r = RAND4;
 				std::swap(_lightArray[indexa + j], _lightArray[indexa + r]);
 			}
