@@ -119,9 +119,9 @@ Vect * Light::positionSoft(int n, int m) {
 
 void Light::shuffleArray(int resx, int resy, int step) {
 	int indexa = 0;
-	for (int i = 0; i < resy; i++) {
+	for (int y = 0; y < resy; y++) {
 		srand((unsigned) time(NULL));
-		for (int ii = 0; ii < resx; ii++) {
+		for (int x = 0; x < resx; x++) {
 			for (int j = 0; j < step; j++) {
 				int r = RAND4;
 				std::swap(_lightArray[indexa + j], _lightArray[indexa + r]);
