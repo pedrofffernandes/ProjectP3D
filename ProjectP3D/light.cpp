@@ -1,13 +1,17 @@
 #include "Light.h"
-#include <iostream>
 
+#define EPSILON 1e-3
+#define RAND4 (int)rand() % (NUMEROAMOSTRAS * NUMEROAMOSTRAS * NUMEROAMOSTRAS_DOF * NUMEROAMOSTRAS_DOF)
 
-Light::Light(Vect* position, Vect* rgb)
+Light::Light(Vect* position, Vect* rgb, int resx, int resy)
 {
 	_position = position;
 	_rgb = rgb;
-	_a = new Vect(1, 0, 0);
-	_b = new Vect(0, 1, 0);
+	_a = new Vect(LIGHT_SIZE, 0, 0);
+	_b = new Vect(0, LIGHT_SIZE, 0);
+	if (USE_ARRAY_SOFTSHADOWS) {
+		buildArray(resx, resy);
+	}
 }
 
 
@@ -30,8 +34,7 @@ Vect * Light::getLVect(Vect * hit) {
 	return result;
 }
 
-Vect * Light::getLVectSoft(Vect * hit)
-{
+Vect * Light::getLVectSoft(Vect * hit) {
 	Vect * result = new Vect(_position);
 	Vect * a = new Vect(_a);
 	Vect * b = new Vect(_b);
@@ -77,4 +80,53 @@ Vect * Light::getSpecular(Vect * normal, Vect * L, Material * mat, Vect* v)
 	delete I;
 	delete V;
 	return result;
+}
+
+Vect * Light::getLVectArrays(Vect * hit, int index) {
+	Vect * result = new Vect(_lightArray[index]);
+	result->minus(hit);
+	result->normalize();
+	return result;
+}
+
+void Light::buildArray(int resx, int resy) {
+	_lightArray.reserve(resx * resy * NUMEROAMOSTRAS * NUMEROAMOSTRAS * NUMEROAMOSTRAS_DOF * NUMEROAMOSTRAS_DOF);
+	
+	for (int y = 0; y < resy; y++) {
+		for (int x = 0; x < resx; x++) {
+
+			for (int n = 0; n < NUMEROAMOSTRAS * NUMEROAMOSTRAS_DOF; n++) {
+				for (int m = 0; m < NUMEROAMOSTRAS * NUMEROAMOSTRAS_DOF; m++) {
+					_lightArray.push_back(positionSoft(n, m));
+				}
+			}
+		}
+	}
+	int step = NUMEROAMOSTRAS * NUMEROAMOSTRAS * NUMEROAMOSTRAS_DOF * NUMEROAMOSTRAS_DOF;
+	shuffleArray(resx, resy, step);
+}
+
+Vect * Light::positionSoft(int n, int m) {
+	Vect * result = new Vect(_position);
+	Vect * a = new Vect(_a);
+	Vect * b = new Vect(_b);
+	result->add(a->multiply(((n + (ERAND / NUMEROAMOSTRAS * NUMEROAMOSTRAS_DOF)) / (NUMEROAMOSTRAS * NUMEROAMOSTRAS_DOF))));
+	result->add(b->multiply(((m + (ERAND / NUMEROAMOSTRAS * NUMEROAMOSTRAS_DOF)) / (NUMEROAMOSTRAS * NUMEROAMOSTRAS_DOF))));
+	delete a;
+	delete b;
+	return result;
+}
+
+void Light::shuffleArray(int resx, int resy, int step) {
+	int indexa = 0;
+	for (int i = 0; i < resy; i++) {
+		srand((unsigned) time(NULL));
+		for (int ii = 0; ii < resx; ii++) {
+			for (int j = 0; j < step; j++) {
+				int r = RAND4;
+				std::swap(_lightArray[indexa + j], _lightArray[indexa + r]);
+			}
+			indexa += step;
+		}
+	}
 }

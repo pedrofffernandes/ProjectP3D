@@ -21,9 +21,14 @@
 // VARIABLES
 Scene * scene = NULL;
 int RES_X, RES_Y;
-Vect * rayTracing(Ray * ray, int depth, float ior);
+Vect * rayTracing(Ray * ray, int depth, float ior, int index);
 void multiSample(Vect * color, int x, int y);
 void multiSampleDOF(Vect * color, int x, int y);
+int LIndex(int x, int y, int m, int n);
+int LIndex(int x, int y, int m, int n, int o, int q);
+void monteCarlo();
+Vect* monteCarlo2(float x, float y, std::vector<Vect*> &monte, int a, int b, int depth);
+bool checkThreshold(Vect*, Vect*, Vect*, Vect*);
 bool inShadow(Ray* ray);
 void drawScene_withoutOPENGL(Scene);
 // Declarations
@@ -168,7 +173,7 @@ void drawScene_withoutOPENGL(Scene * scene) {
 			Ray * ray;
 
 			ray = scene->getCamera()->PrimaryRay(x + 0.5f, y + 0.5f);
-			color->add(rayTracing(ray, 1, IOR)); 
+			color->add(rayTracing(ray, 1, IOR, 0)); 
 
 			pixel_index = y*RES_X + x;
 			// RED

@@ -54,6 +54,12 @@
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="Vect.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="test_scenes\balls_low.nff" />
+    <None Include="test_scenes\mount_low.nff" />
+    <None Include="test_scenes\room2.nff" />
+    <None Include="test_scenes\room_low.nff" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E0C9B693-1CE5-410C-AC56-A840AF0FD8F8}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
