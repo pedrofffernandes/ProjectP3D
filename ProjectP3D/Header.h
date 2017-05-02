@@ -51,18 +51,27 @@ void savebmp(const char * filename, int w, int h, int dpi, RGBType *data);
 //Checks if a ray intersects any object
 //Used to check if objects are in shadow
 bool inShadow(Ray* ray) {
-	std::list<Obj*> objs = scene->getObjects();
-	std::list<Obj*>::iterator itO;
-	float hit = 0;
-
-	for (itO = objs.begin(); itO != objs.end(); itO++) {
-		hit = ((Obj*)*itO)->intersect(ray);				//Intersect
-		if (hit > 0) {
-			return true;
-		}
+	if (USE_GRID) {
+		if (scene->getGrid()->traverseInShadow(ray) == nullptr)
+			return false;
+		return true;
 	}
-	return false;
+	else {
+		std::list<Obj*> objs = scene->getObjects();
+		std::list<Obj*>::iterator itO;
+		float hit = 0;
+
+		for (itO = objs.begin(); itO != objs.end(); itO++) {
+			hit = ((Obj*)*itO)->intersect(ray);				//Intersect
+			if (hit > 0) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
+	
+
 
 // Definitions
 struct RGBType {

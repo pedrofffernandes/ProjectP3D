@@ -21,7 +21,9 @@ Material * mat;
 
 /* Scene */
 
-Scene::Scene() {}
+Scene::Scene() {
+	_plane = nullptr;
+}
 
 Camera* Scene::getCamera()
 {

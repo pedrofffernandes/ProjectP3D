@@ -21,6 +21,7 @@ public:
 	std::list<Obj*> getObjects() { return _objects; }
 	bool isEmpty() { return _objects.empty(); }
 	intersection* hit(Ray*);
+	intersection* hitInShadow(Ray*);
 };
 
 #endif // !__CELL_H__

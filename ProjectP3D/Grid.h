@@ -30,11 +30,13 @@ public:
 	//Intersection traverse(Ray* ray);
 	limit * kkAlgorithmn(Ray*);
 	intersection * traverse(Ray*);
+	intersection * traverseInShadow(Ray*);
 	unsigned int indexOfCell(int, int, int); /// Returns the index 
-	float clamp(float n, float min, float max) {
+	int clamp(float n, float min, float max) {
 		return n <= min ? min : n >= max ? max : n;
 	}
 	unsigned int numberOfObjects() { return _Nx*_Ny*_Nz / pow(M, 3); }
+	unsigned int numberOfCells() { return _Nx*_Ny*_Nz; }
 };
 
 #endif // !__GRID_H__

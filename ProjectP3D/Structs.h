@@ -14,6 +14,9 @@ struct intersection;
 struct limit {
 	Vect * min;
 	Vect * max;
+	float near;
+	float far;
+
 };
 struct intersection {
 	float distance;
