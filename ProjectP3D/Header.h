@@ -57,8 +57,10 @@ void savebmp(const char * filename, int w, int h, int dpi, RGBType *data);
 //Used to check if objects are in shadow
 bool inShadow(Ray* ray) {
 	if (USE_GRID) {
-		if (scene->getGrid()->traverseInShadow(ray) == nullptr)
+		intersection* i = scene->getGrid()->traverseInShadow(ray);
+		if (i == nullptr)
 			return false;
+		delete i;
 		return true;
 	}
 	else {

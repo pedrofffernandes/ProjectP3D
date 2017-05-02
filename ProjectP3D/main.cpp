@@ -285,6 +285,7 @@ Vect * rayTracing(Ray * ray, int depth, float ior, int index) {
 			closest = i->object;
 			dist = i->distance;
 			hit = ray->getHitPoint(dist);
+			delete i;
 		}
 	}
 	else {
@@ -419,7 +420,7 @@ int main(int argc, char**argv)
 {
 	srand((unsigned)time(NULL));
 	scene = new Scene();
-	if (!(scene->load_nff("test_scenes/balls_high.nff"))) return 0;
+	if (!(scene->load_nff("test_scenes/balls_low.nff"))) return 0;
 	
 	RES_X = scene->getCamera()->getResX();
 	RES_Y = scene->getCamera()->getResY();

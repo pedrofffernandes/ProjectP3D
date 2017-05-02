@@ -145,10 +145,12 @@ limit * Grid::kkAlgorithmn(Ray * r)
 		// 3) Check if ray doesnt intersect
 		if (Vd == 0) {
 			/// Ray is parallel
-			if (Vo < Vmin || Vo > Vmax)
+			if (Vo < Vmin || Vo > Vmax) {
 				/// Ray doesnt intersect
+				delete min;
+				delete max;
 				return nullptr;
-			else {
+			} else {
 				switch (i) {
 				case 0: /// X coordinate
 					min->setX(Vmin - Vo);
@@ -195,10 +197,18 @@ limit * Grid::kkAlgorithmn(Ray * r)
 		if (tmin > tnear) tnear = tmin;
 		if (tmax < tfar) tfar = tmax;
 		// 5)
-		if (tnear > tfar) return nullptr;
+		if (tnear > tfar) {
+			delete min;
+			delete max;
+			return nullptr;
+		}
 		// 6)
 		/// ray points in the opposite direction
-		if (tfar < 0) return nullptr;
+		if (tfar < 0) { 
+			delete min;
+			delete max;
+			return nullptr; 
+		}
 	} // END of FOR
 
 	// Compute intersection points
@@ -232,13 +242,13 @@ intersection * Grid::traverse(Ray * ray)
 	float max_y = _bbox->getMaxY();
 	float max_z = _bbox->getMaxZ();
 	/// First intersection point coordinates
-	float tmin_x = l->min->getX(); // ERRO
-	float tmin_y = l->min->getY(); // ERRO
-	float tmin_z = l->min->getZ(); // ERRO
+	float tmin_x = l->min->getX(); 
+	float tmin_y = l->min->getY(); 
+	float tmin_z = l->min->getZ(); 
 	/// Second intersection point coordinates
-	float tmax_x = l->max->getX(); // ERRO
-	float tmax_y = l->max->getY(); // ERRO
-	float tmax_z = l->max->getZ(); // ERRO
+	float tmax_x = l->max->getX(); 
+	float tmax_y = l->max->getY(); 
+	float tmax_z = l->max->getZ(); 
 	/// Check if the ray comes from inside the GRID
 	if (_bbox->inside(ray->getO())) {
 		ix = clamp((ox - min_x) * _Nx / (max_x - min_x), 0, _Nx - 1);
@@ -251,6 +261,7 @@ intersection * Grid::traverse(Ray * ray)
 		ix = clamp((p->getX() - min_x) * _Nx / (max_x - min_x), 0, _Nx - 1);
 		iy = clamp((p->getY() - min_y) * _Ny / (max_y - min_y), 0, _Ny - 1);
 		iz = clamp((p->getZ() - min_z) * _Nz / (max_z - min_z), 0, _Nz - 1);
+		delete p;
 	}
 	// traverse the grid
 	/// 1) Set Up Grid Traversal
@@ -310,7 +321,7 @@ intersection * Grid::traverse(Ray * ray)
 		istep_z = -1;
 		istop_z = -1;
 	}
-
+	delete l;
 	// Grid Traversal Loop
 	while (true) {
 		/// Get Cell at current index
@@ -326,9 +337,9 @@ intersection * Grid::traverse(Ray * ray)
 				/// check if the ray intersected the object 
 				if (i->object != nullptr) {
 					/// compute the distance in X to the intersection point
-					float t = i->distance;  // ERRO
+					float t = i->distance;  
 					/// check if the intersection its on the current cell
-					if (t < tnext_x) {  // ERRO
+					if (t < tnext_x) {
 						/// if it is, then its the object we wanted
 						return i;
 					}
@@ -354,9 +365,9 @@ intersection * Grid::traverse(Ray * ray)
 					/// check if the ray intersected the object 
 					if (i->object != nullptr) {
 						/// compute the distance in X to the intersection point
-						float t = i->distance;  // ERRO
+						float t = i->distance;   
 						/// check if the intersection its on the current cell
-						if (t < tnext_y) {  // ERRO
+						if (t < tnext_y) {  
 							/// if it is, then its the object we wanted
 							return i;
 						}
@@ -380,9 +391,9 @@ intersection * Grid::traverse(Ray * ray)
 					/// check if the ray intersected the object 
 					if (i->object != nullptr) {
 						/// compute the distance in X to the intersection point
-						float t = i->distance;  // ERRO
+						float t = i->distance;   
 						/// check if the intersection its on the current cell
-						if (t < tnext_z) {  // ERRO
+						if (t < tnext_z) {   
 							/// if it is, then its the object we wanted
 							return i;
 						}
@@ -432,13 +443,13 @@ intersection * Grid::traverseInShadow(Ray * ray)
 	float max_y = _bbox->getMaxY();
 	float max_z = _bbox->getMaxZ();
 	/// First intersection point coordinates
-	float tmin_x = l->min->getX(); // ERRO
-	float tmin_y = l->min->getY(); // ERRO
-	float tmin_z = l->min->getZ(); // ERRO
+	float tmin_x = l->min->getX();  
+	float tmin_y = l->min->getY();  
+	float tmin_z = l->min->getZ();  
 								   /// Second intersection point coordinates
-	float tmax_x = l->max->getX(); // ERRO
-	float tmax_y = l->max->getY(); // ERRO
-	float tmax_z = l->max->getZ(); // ERRO
+	float tmax_x = l->max->getX();  
+	float tmax_y = l->max->getY();  
+	float tmax_z = l->max->getZ();  
 								   /// Check if the ray comes from inside the GRID
 	if (_bbox->inside(ray->getO())) {
 		ix = clamp((ox - min_x) * _Nx / (max_x - min_x), 0, _Nx - 1);
@@ -452,6 +463,7 @@ intersection * Grid::traverseInShadow(Ray * ray)
 		ix = clamp((p->getX() - min_x) * _Nx / (max_x - min_x), 0, _Nx - 1);
 		iy = clamp((p->getY() - min_y) * _Ny / (max_y - min_y), 0, _Ny - 1);
 		iz = clamp((p->getZ() - min_z) * _Nz / (max_z - min_z), 0, _Nz - 1);
+		delete p;
 	}
 	// traverse the grid
 	/// 1) Set Up Grid Traversal
@@ -511,6 +523,8 @@ intersection * Grid::traverseInShadow(Ray * ray)
 		istep_z = -1;
 		istop_z = -1;
 	}
+
+	delete l;
 
 	// Grid Traversal Loop
 	while (true) {

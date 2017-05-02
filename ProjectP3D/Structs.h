@@ -16,7 +16,10 @@ struct limit {
 	Vect * max;
 	float near;
 	float far;
-
+	~limit() { 
+		delete min;
+		delete max;
+	}
 };
 struct intersection {
 	float distance;
